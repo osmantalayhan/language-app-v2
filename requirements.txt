@@ -1,0 +1,10 @@
+Flask==2.0.1
+Flask-SQLAlchemy==2.5.1
+SQLAlchemy==1.4.41
+edge-tts==6.1.9 
+Flask-Login==0.5.0
+Werkzeug==2.0.1
+requests>=2.27.0
+oauthlib==3.1.1
+python-dotenv==0.19.0
+Flask-Limiter 

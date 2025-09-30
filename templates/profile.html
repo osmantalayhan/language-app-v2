@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link href="https://fonts.cdnfonts.com/css/neue-machina" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+        .neue-machina {
+            font-family: 'Neue Machina', sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Noise Effect */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        /* Gradient Spheres */
+        .gradient-sphere {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Back Button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .back-button:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Profile Layout */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+        }
+
+        /* Sidebar */
+        .profile-sidebar {
+            position: sticky;
+            top: 32px;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .profile-avatar::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-name {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profile-joined {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 16px;
+        }
+
+        .profile-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .profile-menu-item {
+            padding: 8px 12px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .profile-menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        /* Logout Button */
+        .logout-button {
+            margin-top: 20px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .logout-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content */
+        .profile-content {
+            min-height: 600px;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        /* Progress Section */
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .progress-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .progress-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .progress-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.5);
+            flex-shrink: 0;
+        }
+
+        .progress-content {
+            flex-grow: 1;
+        }
+
+        .progress-value {
+            font-family: 'Neue Machina', monospace;
+            font-size: 28px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 2px;
+            line-height: 1;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* Activity Feed */
+        .activity-item {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .activity-meta {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Settings Form */
+        .settings-form {
+            display: grid;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Form Elements */
+        .form-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6L8 10L12 6' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-input:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-input option {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 8px;
+        }
+
+        /* Buttons */
+        .button {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
+        .button-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-sidebar {
+                position: static;
+            }
+
+            .progress-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .progress-card {
+                padding: 16px;
+            }
+
+            .progress-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .progress-value {
+            font-size: 24px;
+            }
+
+            .progress-label {
+                font-size: 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        /* Activity styles */
+        .activity-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+
+        .activity-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-chevron {
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+
+        .activity-item.expanded .activity-chevron {
+            transform: rotate(180deg);
+        }
+
+        .activity-details {
+            display: none;
+            padding: 0 12px 12px 48px;
+            margin-top: -8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .activity-item.expanded .activity-details {
+            display: block;
+        }
+
+        .activity-examples {
+            margin-top: 4px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .activity-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            padding: 4px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .activity-level {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Activity Filter Specific Styles */
+        .activity-filter {
+            min-width: 160px;
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .activity-filter:focus {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-translation {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        .activity-group {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .activity-group-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .activity-group-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-group-details {
+            display: none;
+            padding: 0 16px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-group.expanded .activity-group-details {
+            display: block;
+        }
+
+        .activity-group.expanded .activity-chevron {
+            transform: rotate(180deg);
+        }
+
+        .activity-subitem {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-subitem:last-child {
+            border-bottom: none;
+        }
+
+        .activity-subitem-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .activity-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .activity-subicon {
+            flex-shrink: 0;
+            padding: 3px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .activity-subitem-details {
+            padding-left: 24px;
+        }
+
+        .activity-status {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            margin-right: 16px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-badge.example {
+            background: rgba(64, 156, 255, 0.2);
+            color: #40bcff;
+        }
+
+        .status-badge.mastered {
+            background: rgba(75, 229, 75, 0.2);
+            color: #4be54b;
+        }
+
+        .activity-timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 12px 0;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -24px;
+            background: #000;
+            padding: 2px;
+            border-radius: 50%;
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 12px;
+            margin-left: 8px;
+        }
+
+        .timeline-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .timeline-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        .mt-2 { margin-top: 8px; }
+        .mt-3 { margin-top: 12px; }
+        .mt-6 { margin-top: 24px; }
+
+        .password-group {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+
+        #settings-message {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        #settings-message.success {
+            background: rgba(75, 229, 75, 0.1);
+            color: #4be54b;
+            border: 1px solid rgba(75, 229, 75, 0.2);
+        }
+
+        #settings-message.error {
+            background: rgba(255, 76, 76, 0.1);
+            color: #ff4c4c;
+            border: 1px solid rgba(255, 76, 76, 0.2);
+        }
+
+        .form-input[readonly] {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Gradient Spheres -->
+    <div class="gradient-sphere" style="top: 20%; left: 30%;"></div>
+    <div class="gradient-sphere" style="top: 60%; left: 70%;"></div>
+
+    <div class="container">
+        <!-- Back Button -->
+        <a href="/dashboard" class="back-button">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to Dashboard
+        </a>
+
+        <div class="profile-layout">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-card">
+                <div class="profile-avatar">
+                        {{ current_user.username[0].upper() }}
+                </div>
+                    <h1 class="profile-name">{{ current_user.username }}</h1>
+                    <div class="profile-joined">Joined {{ current_user.created_at.strftime('%B %Y') }}</div>
+                    <ul class="profile-menu">
+                        <li class="profile-menu-item active" data-tab="overview">Overview</li>
+                        <li class="profile-menu-item" data-tab="progress">Progress</li>
+                        <li class="profile-menu-item" data-tab="activity">Activity</li>
+                        <li class="profile-menu-item" data-tab="settings">Settings</li>
+                    </ul>
+                    
+                    <a href="/logout" class="logout-button">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6 14H3.33333C2.97971 14 2.64057 13.8595 2.39052 13.6095C2.14048 13.3594 2 13.0203 2 12.6667V3.33333C2 2.97971 2.14048 2.64057 2.39052 2.39052C2.64057 2.14048 2.97971 2 3.33333 2H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M10.6667 11.3333L14 8L10.6667 4.66667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Logout
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="profile-content">
+                <!-- Overview Section -->
+                <div id="overview" class="content-section active">
+                    <div class="section-header">
+                        <h2 class="section-title">Learning Progress</h2>
+                        <button class="button button-secondary" onclick="switchToTab('progress')">View Details</button>
+                    </div>
+                    <div class="progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 8V16M16 12H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="progress-content">
+                                <div class="progress-value">{{ stats.total_words }}</div>
+                                <div class="progress-label">TOTAL WORDS</div>
+                            </div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="progress-content">
+                                <div class="progress-value">{{ stats.mastered_words }}</div>
+                                <div class="progress-label">MASTERED</div>
+                            </div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-icon">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 20V4M12 4L6 10M12 4L18 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="progress-content">
+                                <div class="progress-value">{{ stats.learning_streak }}</div>
+                                <div class="progress-label">DAY STREAK</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header" style="margin-top: 32px;">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <button class="button button-secondary" onclick="switchToTab('activity')">View All</button>
+                    </div>
+                    {% set grouped_activities = {} %}
+                    {% for activity in recent_activities %}
+                        {% if activity.details.get('word') %}
+                            {% if activity.details.word not in grouped_activities %}
+                                {% set _ = grouped_activities.update({activity.details.word: []}) %}
+                            {% endif %}
+                            {% set _ = grouped_activities[activity.details.word].append(activity) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for word, activities in grouped_activities.items() %}
+                    <div class="activity-group">
+                        <div class="activity-group-header" onclick="toggleActivityGroup(this)">
+                            <div class="activity-icon-wrapper">
+                                <svg class="activity-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M8 3.33334V12.6667M12.6667 8H3.33334" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Word: '{{ word }}'</div>
+                                <div class="activity-meta">{{ activities[0].date.strftime('%B %d, %Y') }}</div>
+                            </div>
+                            <svg class="activity-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="activity-group-details">
+                            {% for activity in activities %}
+                            <div class="activity-subitem">
+                                <div class="activity-subitem-header">
+                                    {% if activity.icon == 'plus' %}
+                                    <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                        <path d="M8 3.33334V12.6667M12.6667 8H3.33334" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    {% elif activity.icon == 'edit' %}
+                                    <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                        <path d="M11.333 2.66666C11.5085 2.49111 11.7163 2.35181 11.9451 2.25878C12.1739 2.16575 12.4191 2.12061 12.6666 2.12061C12.9141 2.12061 13.1593 2.16575 13.3881 2.25878C13.6169 2.35181 13.8247 2.49111 14.0002 2.66666C14.1757 2.84222 14.315 3.05001 14.408 3.27882C14.5011 3.50764 14.5462 3.75279 14.5462 4.00033C14.5462 4.24787 14.5011 4.49302 14.408 4.72184C14.315 4.95065 14.1757 5.15844 14.0002 5.33399L5.33329 14L2 14.6667L2.66663 11.3333L11.333 2.66666Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    {% elif activity.icon == 'check' %}
+                                    <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                        <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    {% endif %}
+                                    <div class="activity-subtitle">{{ activity.title }}</div>
+                                </div>
+                                <div class="activity-subitem-details">
+                                    {% if activity.details.get('level') %}
+                                    <div class="activity-level">Level: {{ activity.details.level }}</div>
+                                    {% endif %}
+                                    {% if activity.activity_type == 'word_added' and activity.details.get('translation') %}
+                                    <div class="activity-translation">{{ activity.details.translation }}</div>
+                                    {% endif %}
+                                    {% if activity.details.get('examples_count') %}
+                                    <div class="activity-examples">Added {{ activity.details.examples_count }} example sentences</div>
+                                    {% endif %}
+                                    {% if activity.activity_type == 'sentence_exercise' and activity.details.get('sentence') %}
+                                    <div class="activity-examples">Sentence: "{{ activity.details.sentence }}"</div>
+                                    {% endif %}
+                                    {% if activity.activity_type == 'sentence_shared' and activity.details.get('sentence') %}
+                                    <div class="activity-examples">Shared: "{{ activity.details.sentence }}"</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Progress Section -->
+                <div id="progress" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Detailed Progress</h2>
+                    </div>
+                    <div class="progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.total_words }}</div>
+                            <div class="progress-label">Total Words</div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.mastered_words }}</div>
+                            <div class="progress-label">Mastered</div>
+                </div>
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.learning_streak }}</div>
+                            <div class="progress-label">Day Streak</div>
+                </div>
+            </div>
+
+                    <div class="section-header" style="margin-top: 32px;">
+                        <h2 class="section-title">Learning Statistics</h2>
+                    </div>
+                    <div class="progress-grid">
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.accuracy_rate }}%</div>
+                            <div class="progress-label">Accuracy Rate</div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.daily_average }}</div>
+                            <div class="progress-label">Daily Average</div>
+                        </div>
+                        <div class="progress-card">
+                            <div class="progress-value">{{ stats.active_days }}</div>
+                            <div class="progress-label">Days Active</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activity Section -->
+                <div id="activity" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">All Activity</h2>
+                        <select class="form-input activity-filter" style="width: auto;">
+                            <option value="all">All Activities</option>
+                            <option value="word_added">Added Words</option>
+                            <option value="example_added">Added Examples</option>
+                            <option value="word_mastered">Mastered Words</option>
+                            <option value="sentence_exercise">Practice Sessions</option>
+                            <option value="sentence_shared">Shared Sentences</option>
+                            <option value="achievements">Achievements</option>
+                        </select>
+                    </div>
+                    {% set grouped_activities = {} %}
+                    {% for activity in recent_activities %}
+                        {% if activity.details.get('word') %}
+                            {% if activity.details.word not in grouped_activities %}
+                                {% set _ = grouped_activities.update({activity.details.word: []}) %}
+                            {% endif %}
+                            {% set _ = grouped_activities[activity.details.word].append(activity) %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for word, activities in grouped_activities.items() %}
+                    <div class="activity-group" data-types="{% for activity in activities %}{{ activity.activity_type }} {% endfor %}">
+                        <div class="activity-group-header" onclick="toggleActivityGroup(this)">
+                            <div class="activity-icon-wrapper">
+                                <svg class="activity-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M8 3.33334V12.6667M12.6667 8H3.33334" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Word: '{{ word }}'</div>
+                                <div class="activity-meta">{{ activities[0].date.strftime('%B %d, %Y') }}</div>
+                                {% if activities[0].details.get('translation') %}
+                                <div class="activity-translation">{{ activities[0].details.translation }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="activity-status">
+                                {% set has_examples = false %}
+                                {% set is_mastered = false %}
+                                {% set has_exercise = false %}
+                                {% set has_shared = false %}
+                                {% for activity in activities %}
+                                    {% if activity.activity_type == 'example_added' %}
+                                        {% set has_examples = true %}
+                                    {% endif %}
+                                    {% if activity.activity_type == 'word_mastered' %}
+                                        {% set is_mastered = true %}
+                                    {% endif %}
+                                    {% if activity.activity_type == 'sentence_exercise' %}
+                                        {% set has_exercise = true %}
+                                    {% endif %}
+                                    {% if activity.activity_type == 'sentence_shared' %}
+                                        {% set has_shared = true %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if has_examples %}
+                                <span class="status-badge example">Examples Added</span>
+                                {% endif %}
+                                {% if is_mastered %}
+                                <span class="status-badge mastered">Mastered</span>
+                                {% endif %}
+                                {% if has_exercise %}
+                                <span class="status-badge example">Practiced</span>
+                                {% endif %}
+                                {% if has_shared %}
+                                <span class="status-badge mastered">Shared</span>
+                                {% endif %}
+                            </div>
+                            <svg class="activity-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4 6L8 10L12 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="activity-group-details">
+                            <div class="activity-timeline">
+                                {% for activity in activities|sort(attribute='date') %}
+                                <div class="timeline-item">
+                                    <div class="timeline-icon">
+                                        {% if activity.icon == 'plus' %}
+                                        <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <path d="M8 3.33334V12.6667M12.6667 8H3.33334" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                        {% elif activity.icon == 'edit' %}
+                                        <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <path d="M11.333 2.66666C11.5085 2.49111 11.7163 2.35181 11.9451 2.25878C12.1739 2.16575 12.4191 2.12061 12.6666 2.12061C12.9141 2.12061 13.1593 2.16575 13.3881 2.25878C13.6169 2.35181 13.8247 2.49111 14.0002 2.66666C14.1757 2.84222 14.315 3.05001 14.408 3.27882C14.5011 3.50764 14.5462 3.75279 14.5462 4.00033C14.5462 4.24787 14.5011 4.49302 14.408 4.72184C14.315 4.95065 14.1757 5.15844 14.0002 5.33399L5.33329 14L2 14.6667L2.66663 11.3333L11.333 2.66666Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        {% elif activity.icon == 'check' %}
+                                        <svg class="activity-subicon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                                            <path d="M13.3333 4L6 11.3333L2.66667 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                                        {% endif %}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <div class="timeline-title">{{ activity.title }}</div>
+                                        <div class="timeline-date">{{ activity.date.strftime('%B %d, %Y') }}</div>
+                                        {% if activity.details.get('level') %}
+                                        <div class="activity-level">Level: {{ activity.details.level }}</div>
+                                        {% endif %}
+                                        {% if activity.details.get('examples_count') %}
+                                        <div class="activity-examples">Added {{ activity.details.examples_count }} example sentences</div>
+                                        {% endif %}
+                                        {% if activity.activity_type == 'sentence_exercise' and activity.details.get('sentence') %}
+                                        <div class="activity-examples">Sentence: "{{ activity.details.sentence }}"</div>
+                                        {% endif %}
+                                        {% if activity.activity_type == 'sentence_shared' and activity.details.get('sentence') %}
+                                        <div class="activity-examples">Shared: "{{ activity.details.sentence }}"</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Settings Section -->
+                <div id="settings" class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Profile Settings</h2>
+                    </div>
+                    <form id="settings-form" class="settings-form">
+                        <div class="form-group">
+                            <label class="form-label">Display Name</label>
+                            <input type="text" name="username" class="form-input" value="{{ current_user.username }}" required minlength="3" maxlength="30" pattern="[a-zA-Z0-9._]{3,30}">
+                            <div class="form-hint">3-30 characters, letters, numbers, dots and underscores only</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-input" value="{{ current_user.email }}" {% if current_user.google_id %}readonly{% endif %} required>
+                            {% if current_user.google_id %}
+                            <div class="form-hint">Email cannot be changed for Google accounts</div>
+                            {% endif %}
+                        </div>
+
+                        {% if not current_user.google_id %}
+                        <div class="form-group password-group">
+                            <label class="form-label">Change Password</label>
+                            <input type="password" name="current_password" class="form-input" placeholder="Current Password">
+                            <input type="password" name="new_password" class="form-input mt-2" placeholder="New Password">
+                            <div class="form-hint">Leave blank to keep current password. New password must be at least 8 characters with uppercase, lowercase, number and special character.</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label class="form-label">Language Level</label>
+                            <select name="language_level" class="form-input" required>
+                                <option value="Beginner" {% if current_user.language_level == 'Beginner' %}selected{% endif %}>Beginner</option>
+                                <option value="Intermediate" {% if current_user.language_level == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                                <option value="Advanced" {% if current_user.language_level == 'Advanced' %}selected{% endif %}>Advanced</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Daily Goal</label>
+                            <select name="daily_goal" class="form-input" required>
+                                <option value="10 words per day" {% if current_user.daily_goal == 10 %}selected{% endif %}>10 words per day</option>
+                                <option value="25 words per day" {% if current_user.daily_goal == 25 %}selected{% endif %}>25 words per day</option>
+                                <option value="50 words per day" {% if current_user.daily_goal == 50 %}selected{% endif %}>50 words per day</option>
+                                <option value="100 words per day" {% if current_user.daily_goal == 100 %}selected{% endif %}>100 words per day</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Notifications</label>
+                            <select name="email_notifications" class="form-input" required>
+                                <option value="Daily" {% if current_user.email_notifications == 'Daily' %}selected{% endif %}>Daily</option>
+                                <option value="Weekly" {% if current_user.email_notifications == 'Weekly' %}selected{% endif %}>Weekly</option>
+                                <option value="Never" {% if current_user.email_notifications == 'Never' %}selected{% endif %}>Never</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-6">
+                            <button type="submit" class="button" id="save-settings">Save Changes</button>
+                            <div id="settings-message" class="mt-3" style="display: none;"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/about" class="footer-link">About</a>
+                <a href="/privacy" class="footer-link">Privacy Policy</a>
+                <a href="/terms" class="footer-link">Terms of Service</a>
+                <a href="/contact" class="footer-link">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                © 2024 WordSpace. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching functionality
+        const menuItems = document.querySelectorAll('.profile-menu-item');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        function switchToTab(tabId) {
+            // Update menu items
+            menuItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-tab') === tabId) {
+                    item.classList.add('active');
+                }
+            });
+
+            // Update content sections
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === tabId) {
+                    section.classList.add('active');
+                }
+            });
+        }
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const tabId = item.getAttribute('data-tab');
+                switchToTab(tabId);
+            });
+        });
+
+        // Mouse follow effect for gradient spheres
+        document.addEventListener('mousemove', (e) => {
+            const spheres = document.querySelectorAll('.gradient-sphere');
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            spheres.forEach((sphere, index) => {
+                const speed = index === 0 ? 0.05 : 0.03;
+                const x = mouseX * speed;
+                const y = mouseY * speed;
+                sphere.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            });
+        });
+
+        // Activity filtering for grouped activities
+        const activityFilter = document.querySelector('.activity-filter');
+        const activityGroups = document.querySelectorAll('.activity-group');
+
+        if (activityFilter) {
+            activityFilter.addEventListener('change', (e) => {
+                const filterValue = e.target.value;
+                
+                activityGroups.forEach(group => {
+                    const types = group.dataset.types.split(' ');
+                    if (filterValue === 'all') {
+                        group.style.display = 'block';
+                    } else if (filterValue === 'achievements') {
+                        if (types.includes('daily_goal') || types.includes('streak_milestone')) {
+                            group.style.display = 'block';
+                        } else {
+                            group.style.display = 'none';
+                        }
+                    } else {
+                        if (types.includes(filterValue)) {
+                            group.style.display = 'block';
+                        } else {
+                            group.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+
+        function toggleActivityGroup(header) {
+            const group = header.closest('.activity-group');
+            group.classList.toggle('expanded');
+        }
+
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const messageDiv = document.getElementById('settings-message');
+            const submitButton = document.getElementById('save-settings');
+            
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Saving...';
+                
+                const response = await fetch('/update-profile', {
+                    method: 'POST',
+                    body: new FormData(form)
+                });
+                
+                const result = await response.json();
+                
+                messageDiv.style.display = 'block';
+                if (result.success) {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = result.message;
+                    // Reload page after 1 second to show updated values
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = result.error;
+                }
+            } catch (error) {
+                messageDiv.style.display = 'block';
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'An error occurred. Please try again.';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Save Changes';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version History - WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Section hover effect */
+        .version-section {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .version-section:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .version-tag {
+            background: linear-gradient(45deg, #3366FF, #0052CC);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .feature-tag {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="relative bg-black min-h-screen">
+    <div class="noise"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0 bg-black/50 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2">
+                <img src="{{ url_for('static', filename='images/openai.png') }}" alt="OpenAI Logo" class="h-8">
+                <span class="text-[15px] font-medium">WordSpace</span>
+            </a>
+            <div class="flex items-center gap-6">
+                <a href="{{ url_for('privacy_policy') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Privacy Policy</a>
+                <a href="{{ url_for('terms_of_service') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Terms of Service</a>
+                <a href="{{ url_for('cookie_policy') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Cookie Policy</a>
+                <a href="{{ url_for('version') }}" class="text-[14px] text-white">Version History</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="pt-[120px] pb-[100px]">
+        <div class="max-w-[800px] mx-auto px-6">
+            <h1 class="text-[40px] font-medium mb-8 clash-display">Version History</h1>
+            
+            <div class="space-y-6">
+                <!-- Latest Version -->
+                <section class="version-section">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <h2 class="text-[24px] text-white font-medium">Version 1.2.0</h2>
+                                <span class="version-tag">Latest</span>
+                                <span class="text-[#999999] text-sm">March 15, 2024</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-[16px] font-medium mb-2 flex items-center gap-2">
+                                        New Features
+                                        <span class="feature-tag">Enhancement</span>
+                                    </h3>
+                                    <ul class="list-disc list-inside space-y-2 text-[#999999]">
+                                        <li>Added advanced AI-powered pronunciation feedback</li>
+                                        <li>Introduced personalized learning paths</li>
+                                        <li>Implemented spaced repetition system</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 class="text-[16px] font-medium mb-2 flex items-center gap-2">
+                                        Improvements
+                                        <span class="feature-tag">Update</span>
+                                    </h3>
+                                    <ul class="list-disc list-inside space-y-2 text-[#999999]">
+                                        <li>Enhanced user interface responsiveness</li>
+                                        <li>Optimized word suggestion algorithm</li>
+                                        <li>Improved error handling and feedback</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Previous Version -->
+                <section class="version-section">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <h2 class="text-[24px] text-white font-medium">Version 1.1.0</h2>
+                                <span class="text-[#999999] text-sm">February 28, 2024</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-[16px] font-medium mb-2 flex items-center gap-2">
+                                        New Features
+                                        <span class="feature-tag">Enhancement</span>
+                                    </h3>
+                                    <ul class="list-disc list-inside space-y-2 text-[#999999]">
+                                        <li>Added Google OAuth integration</li>
+                                        <li>Implemented word progress tracking</li>
+                                        <li>Added example sentences for words</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 class="text-[16px] font-medium mb-2 flex items-center gap-2">
+                                        Bug Fixes
+                                        <span class="feature-tag">Fix</span>
+                                    </h3>
+                                    <ul class="list-disc list-inside space-y-2 text-[#999999]">
+                                        <li>Fixed authentication issues</li>
+                                        <li>Resolved word saving problems</li>
+                                        <li>Fixed mobile responsiveness issues</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Initial Release -->
+                <section class="version-section">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3 mb-4">
+                                <h2 class="text-[24px] text-white font-medium">Version 1.0.0</h2>
+                                <span class="text-[#999999] text-sm">January 15, 2024</span>
+                            </div>
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="text-[16px] font-medium mb-2 flex items-center gap-2">
+                                        Initial Release
+                                        <span class="feature-tag">Launch</span>
+                                    </h3>
+                                    <ul class="list-disc list-inside space-y-2 text-[#999999]">
+                                        <li>Basic word learning functionality</li>
+                                        <li>User authentication system</li>
+                                        <li>Word management features</li>
+                                        <li>Basic AI integration</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 border-t border-white/10">
+        <div class="max-w-[800px] mx-auto px-6">
+            <p class="text-[14px] text-[#999999] text-center">
+                © 2024 WordSpace. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html> 

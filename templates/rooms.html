@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordSpace - Çalışma Odaları</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Noise Effect */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        /* Gradient Spheres */
+        .gradient-sphere {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-image {
+            max-width: 100%;
+            height: auto;
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .logo-image:hover {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        /* Menu Categories */
+        .menu-category {
+            margin-bottom: 20px;
+        }
+
+        .menu-category:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0px 24px 24px 24px;
+        }
+
+        /* Header Bar Styles */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .app-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Room Cards */
+        .room-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .room-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .room-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #111111 0%, #1a1a1a 100%);
+            z-index: -1;
+        }
+        
+        .room-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                rgba(255, 255, 255, 0.03),
+                rgba(255, 255, 255, 0)
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .room-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .room-card:hover .room-title {
+            color: #ffffff;
+        }
+        
+        .room-card-content {
+            position: relative;
+            z-index: 1;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .room-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+            transition: all 0.5s ease;
+            opacity: 0.5;
+        }
+
+        .room-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            transition: color 0.3s ease;
+            letter-spacing: -0.01em;
+        }
+
+        .room-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .room-meta {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .room-badge {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .room-members {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 15px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .room-members svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 1.5;
+        }
+        
+        .room-date {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .join-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .join-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Section Headers */
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 15px;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* User Search */
+        .user-search-container {
+            position: relative;
+        }
+
+        .user-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .user-search-results.active {
+            display: block;
+        }
+
+        .user-search-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-search-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Selected Users */
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .selected-user {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 4px 12px 4px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .selected-user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .remove-user {
+            margin-left: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+
+        .remove-user:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Gradient Spheres -->
+    <div class="gradient-sphere" style="top: 20%; left: 30%;"></div>
+    <div class="gradient-sphere" style="top: 60%; left: 70%;"></div>
+
+    <div class="container">
+        <div class="main-layout">
+            {% include 'sidebar.html' %}
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="header-bar">
+                    <h1 class="app-title">Çalışma Odaları</h1>
+                    <button class="btn-primary" onclick="openCreateRoomModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                        Yeni Oda Oluştur
+                    </button>
+                </div>
+
+                <!-- Invitations Section -->
+                <div id="room-invitations" class="mb-8" style="display: none;">
+                    <h2 class="section-title mb-4">Aldığınız Oda Davetleri</h2>
+                    <div id="invitations-container" class="space-y-4">
+                        <!-- Davetler JavaScript ile buraya eklenecek -->
+                    </div>
+                </div>
+                
+                <!-- User Rooms Section -->
+                <div>
+                    
+                    <div class="room-grid">
+                        {% if user_rooms %}
+                            {% for room in user_rooms %}
+                                <div class="room-card" onclick="goToRoom('{{ room.id }}')">
+                                    <div class="room-accent"></div>
+                                    <div class="room-card-content">
+                                        <h3 class="room-title">{{ room.name }}</h3>
+                                        {% if room.created_by == current_user.id %}
+                                        <div class="room-badge">Yönetici</div>
+                                        {% endif %}
+                                        <p class="room-description">{{ room.description or 'Bu oda için açıklama eklenmemiş.' }}</p>
+                                        <div class="room-meta">
+                                            <div class="room-members">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                                <span>{{ room.member_count if room.member_count is defined else '?' }}</span>
+                                            </div>
+                                            <div class="room-date">{{ room.created_at.strftime('%d %b %Y') if room.created_at is defined else '-' }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-span-full p-6 rounded-lg border border-white/10 bg-white/5 text-center">
+                                <div class="flex flex-col items-center justify-center gap-4">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-white/20">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="9" cy="7" r="4"/>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                    </svg>
+                                    <h3 class="text-xl font-medium text-white/80">Henüz bir odaya üye değilsiniz</h3>
+                                    <p class="text-white/50 max-w-md">Yeni bir oda oluşturabilir veya mevcut odalara katılabilirsiniz.</p>
+                                    <button class="btn-primary mt-4" onclick="openCreateRoomModal()">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 5v14M5 12h14"/>
+                                        </svg>
+                                        Yeni Oda Oluştur
+                                    </button>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Browse Rooms Section -->
+                <div class="mt-10">
+                    <h2 class="section-title">Katılabileceğiniz Odalar</h2>
+                    
+                    <div class="room-grid">
+                        {% if all_rooms %}
+                            {% for room in all_rooms %}
+                                <div class="room-card">
+                                    <div class="room-accent"></div>
+                                    <div class="room-card-content">
+                                        <h3 class="room-title">{{ room.name }}</h3>
+                                        <p class="room-description">{{ room.description or 'Bu oda için açıklama eklenmemiş.' }}</p>
+                                        <div class="room-meta">
+                                            <div class="room-members">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="9" cy="7" r="4"></circle>
+                                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                                </svg>
+                                                <span>{{ room.member_count if room.member_count is defined else '?' }}</span>
+                                            </div>
+                                            {% if room.join_request_status == 'pending' %}
+                                                <button class="join-button" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                                    İstek Gönderildi
+                                                </button>
+                                            {% elif room.join_request_status == 'accepted' %}
+                                                <button class="join-button" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                                    Kabul Edildi
+                                                </button>
+                                            {% elif room.join_request_status == 'rejected' %}
+                                                <button class="join-button" onclick="event.stopPropagation(); requestJoinRoom('{{ room.id }}', this)">
+                                                    Tekrar Dene
+                                                </button>
+                                            {% else %}
+                                                <button class="join-button" onclick="event.stopPropagation(); requestJoinRoom('{{ room.id }}', this)">
+                                                    Katılma İsteği Gönder
+                                                </button>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-span-full p-6 rounded-lg border border-white/10 bg-white/5 text-center">
+                                <p class="text-white/50">Şu anda katılabileceğiniz başka oda bulunmuyor.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Room Modal -->
+    <div id="createRoomModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Yeni Çalışma Odası Oluştur</h3>
+                <button class="modal-close" onclick="closeCreateRoomModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="createRoomForm">
+                <div class="form-group">
+                    <label for="roomName" class="form-label">Oda Adı</label>
+                    <input type="text" id="roomName" class="form-control" placeholder="Yeni oda adı" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomDescription" class="form-label">Açıklama (İsteğe Bağlı)</label>
+                    <textarea id="roomDescription" class="form-control" placeholder="Oda hakkında kısa bir açıklama yazın..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="userSearch" class="form-label">Üye Ekle</label>
+                    <div class="user-search-container">
+                        <input type="text" id="userSearch" class="form-control" placeholder="Kullanıcı adı veya e-posta ile ara...">
+                        <div id="userSearchResults" class="user-search-results"></div>
+                    </div>
+                    <div id="selectedUsers" class="selected-users"></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-4 py-2 border border-white/10 text-white/70 rounded-lg hover:bg-white/5 transition-all" onclick="closeCreateRoomModal()">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-white/10 text-white border border-white/10 rounded-lg hover:bg-white/15 transition-all">Oda Oluştur</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Oda Katılım Onay Modal -->
+    <div id="joinRoomModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Odaya Katılma İsteği</h3>
+                <button class="modal-close" onclick="closeJoinRoomModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4">
+                <p class="mb-6 text-white/80">Bu odaya katılmak istiyor musunuz?</p>
+                <div id="join-room-name" class="text-xl font-semibold mb-2"></div>
+                <p id="join-room-description" class="text-white/60 text-sm mb-6"></p>
+                
+                <div class="flex justify-end gap-3 mt-6">
+                    <button class="px-4 py-2 border border-white/10 text-white/70 rounded-lg hover:bg-white/5 transition-all" onclick="viewRoomDetails()">Sadece Görüntüle</button>
+                    <button class="px-4 py-2 bg-white/10 text-white border border-white/10 rounded-lg hover:bg-white/15 transition-all" onclick="confirmJoinRoom()">Odaya Katıl</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Seçilen kullanıcılar
+        let selectedUsers = [];
+
+        // Sayfa yüklendiğinde davetleri yükle
+        document.addEventListener('DOMContentLoaded', function() {
+            loadInvitations();
+            
+            // Her 5 saniyede bir kontrol et (onaylanan join request'ler için)
+            setInterval(loadInvitations, 5000);
+        });
+
+        // Davetleri yükle
+        async function loadInvitations() {
+            try {
+                const response = await fetch('/get_invitations');
+                const data = await response.json();
+                
+                // Onaylanan join request'ler varsa otomatik redirect
+                if (data.success && data.approved_rooms && data.approved_rooms.length > 0) {
+                    // İlk onaylanan odaya git
+                    const roomId = data.approved_rooms[0];
+                    showNotification('success', 'Başarılı!', 'Katılma isteğiniz onaylandı! Odaya yönlendiriliyorsunuz...');
+                    setTimeout(() => {
+                        window.location.href = `/room/${roomId}`;
+                    }, 2000);
+                    return;
+                }
+                
+                if (data.success && data.invitations.length > 0) {
+                    const container = document.getElementById('invitations-container');
+                    container.innerHTML = '';
+                    
+                    data.invitations.forEach(invitation => {
+                        const invitationElement = document.createElement('div');
+                        invitationElement.className = 'p-4 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between';
+                        invitationElement.innerHTML = `
+                            <div>
+                                <h3 class="text-base font-medium">${invitation.room_name}</h3>
+                                <p class="text-sm text-white/60">${invitation.invited_by} tarafından davet edildiniz</p>
+                                <p class="text-xs text-white/40 mt-1">${invitation.created_at}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="px-3 py-1 text-xs bg-white/10 hover:bg-white/15 text-white/80 rounded-md transition-all" 
+                                        onclick="rejectRequest(${invitation.id}, ${invitation.is_join_request})">
+                                    Reddet
+                                </button>
+                                <button class="px-3 py-1 text-xs bg-white/20 hover:bg-white/30 text-white rounded-md transition-all" 
+                                        onclick="acceptRequest(${invitation.id}, ${invitation.is_join_request}, ${invitation.room_id})">
+                                    Kabul Et
+                                </button>
+                            </div>
+                        `;
+                        container.appendChild(invitationElement);
+                    });
+                    
+                    // Davetler bölümünü göster
+                    document.getElementById('room-invitations').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error loading invitations:', error);
+            }
+        }
+
+        // Request/Invitation kabul et
+        async function acceptRequest(invitationId, isJoinRequest, roomId) {
+            try {
+                const endpoint = isJoinRequest ? 
+                    `/approve_join_request/${invitationId}` : 
+                    `/accept_invitation/${invitationId}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (!isJoinRequest && roomId) {
+                        // Normal invitation - odaya git
+                        window.location.href = `/room/${roomId}`;
+                    } else {
+                        // Join request approved - listeyi yenile
+                        showNotification('success', 'Başarılı!', data.message);
+                        loadInvitations();
+                    }
+                } else {
+                    showNotification('error', 'Hata!', data.error);
+                    loadInvitations();
+                }
+            } catch (error) {
+                console.error('Error accepting request:', error);
+                showNotification('error', 'Hata!', 'İstek kabul edilirken bir hata oluştu.');
+            }
+        }
+
+        // Request/Invitation reddet
+        async function rejectRequest(invitationId, isJoinRequest) {
+            try {
+                const endpoint = isJoinRequest ? 
+                    `/reject_join_request/${invitationId}` : 
+                    `/reject_invitation/${invitationId}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('success', 'Başarılı!', data.message);
+                    loadInvitations();
+                } else {
+                    showNotification('error', 'Hata!', data.error);
+                }
+            } catch (error) {
+                console.error('Error rejecting request:', error);
+                showNotification('error', 'Hata!', 'İstek reddedilirken bir hata oluştu.');
+            }
+        }
+
+        // Modal açma/kapama
+        function openCreateRoomModal() {
+            openCreateRoomModalOnPage();
+        }
+        
+        function openCreateRoomModalOnPage() {
+            document.getElementById('createRoomModal').classList.add('active');
+        }
+        
+        // Make it globally accessible
+        window.openCreateRoomModalOnPage = openCreateRoomModalOnPage;
+
+        function closeCreateRoomModal() {
+            document.getElementById('createRoomModal').classList.remove('active');
+            // Formu sıfırla
+            document.getElementById('createRoomForm').reset();
+            document.getElementById('selectedUsers').innerHTML = '';
+            selectedUsers = [];
+        }
+
+        // Kullanıcı arama
+        document.getElementById('userSearch').addEventListener('input', debounce(searchUsers, 300));
+
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+
+        async function searchUsers() {
+            const query = document.getElementById('userSearch').value.trim();
+            const resultsContainer = document.getElementById('userSearchResults');
+
+            if (query.length < 2) {
+                resultsContainer.classList.remove('active');
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/search_users?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+
+                if (data.success && data.users.length > 0) {
+                    resultsContainer.innerHTML = '';
+                    
+                    data.users.forEach(user => {
+                        // Kullanıcı zaten seçilmişse gösterme
+                        if (selectedUsers.some(u => u.id === user.id)) return;
+                        
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-search-item';
+                        userItem.innerHTML = `
+                            <div class="user-avatar">${user.username.charAt(0)}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.username}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                        `;
+                        userItem.addEventListener('click', () => {
+                            addSelectedUser(user);
+                            resultsContainer.classList.remove('active');
+                            document.getElementById('userSearch').value = '';
+                        });
+                        
+                        resultsContainer.appendChild(userItem);
+                    });
+                    
+                    resultsContainer.classList.add('active');
+                } else {
+                    resultsContainer.innerHTML = '<div class="p-3 text-sm text-white/50">Kullanıcı bulunamadı</div>';
+                    resultsContainer.classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error searching users:', error);
+            }
+        }
+
+        // Kullanıcı ekleme/çıkarma
+        function addSelectedUser(user) {
+            if (selectedUsers.some(u => u.id === user.id)) return;
+            
+            selectedUsers.push(user);
+            updateSelectedUsersList();
+        }
+
+        function removeSelectedUser(userId) {
+            selectedUsers = selectedUsers.filter(user => user.id !== userId);
+            updateSelectedUsersList();
+        }
+
+        function updateSelectedUsersList() {
+            const container = document.getElementById('selectedUsers');
+            container.innerHTML = '';
+            
+            selectedUsers.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'selected-user';
+                userItem.innerHTML = `
+                    <div class="selected-user-avatar">${user.username.charAt(0)}</div>
+                    <span>${user.username}</span>
+                    <span class="remove-user" onclick="removeSelectedUser(${user.id})">×</span>
+                `;
+                container.appendChild(userItem);
+            });
+        }
+
+        // Oda oluşturma
+        document.getElementById('createRoomForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const roomName = document.getElementById('roomName').value.trim();
+            const roomDescription = document.getElementById('roomDescription').value.trim();
+            const memberIds = selectedUsers.map(user => user.id);
+            
+            if (!roomName) {
+                alert('Lütfen bir oda adı girin');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/create_room', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: roomName,
+                        description: roomDescription,
+                        members: memberIds
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = `/room/${data.room.id}`;
+                } else {
+                    alert(data.error || 'Oda oluşturulurken bir hata oluştu');
+                }
+            } catch (error) {
+                console.error('Error creating room:', error);
+                alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+            }
+        });
+
+        // Oda navigasyon fonksiyonları
+        // Üye olunan odaya git
+        function goToRoom(roomId) {
+            window.location.href = "/room/" + roomId;
+        }
+
+        // Oda detayına git veya katıl
+        let currentRoomId = null;
+        
+        function goToRoomDetails(roomId) {
+            // Modal içeriğini doldur
+            currentRoomId = roomId;
+            
+            // Oda bilgilerini al
+            const roomCard = document.querySelector(`.room-card[onclick="goToRoomDetails('${roomId}')"]`);
+            const roomName = roomCard.querySelector('.room-title').textContent;
+            const roomDescription = roomCard.querySelector('.room-description').textContent;
+            
+            // Modal içeriğini güncelle
+            document.getElementById('join-room-name').textContent = roomName;
+            document.getElementById('join-room-description').textContent = roomDescription;
+            
+            // Modalı göster
+            document.getElementById('joinRoomModal').classList.add('active');
+        }
+        
+        function closeJoinRoomModal() {
+            document.getElementById('joinRoomModal').classList.remove('active');
+            currentRoomId = null;
+        }
+        
+        function confirmJoinRoom() {
+            if (currentRoomId) {
+                joinRoom(currentRoomId);
+                closeJoinRoomModal();
+            }
+        }
+        
+        function viewRoomDetails() {
+            if (currentRoomId) {
+                window.location.href = "/room/" + currentRoomId + "?view=details";
+                closeJoinRoomModal();
+            }
+        }
+
+        // Odaya katıl
+        async function joinRoom(roomId, event) {
+            try {
+                if (event) {
+                    event.stopPropagation(); // Eğer event parametresi varsa yayılımı durdur
+                }
+                
+                const response = await fetch("/add_member/" + roomId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        user_id: "{{ current_user.id }}"
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.message && data.message.includes("Katılma isteğiniz")) {
+                        showNotification("Katılma isteği gönderildi", data.message, "success");
+                    } else if (data.message && data.message.includes("Zaten bu odanın üyesisiniz")) {
+                        showNotification("Bilgi", data.message, "info");
+                    } else {
+                        // Başarılı katılım, sayfayı yenile veya odaya git
+                        window.location.href = "/room/" + roomId;
+                    }
+                } else {
+                    showNotification("Hata", data.error || 'Odaya katılırken bir hata oluştu', "error");
+                }
+            } catch (error) {
+                console.error('Error joining room:', error);
+                showNotification("Bağlantı Hatası", 'Sunucu ile iletişim kurulamadı. Lütfen tekrar deneyin.', "error");
+            }
+        }
+
+        // Bildirim gösterme fonksiyonu
+        function showNotification(title, message, type = "info") {
+            // Mevcut bildirimi kaldır
+            const existingNotification = document.getElementById('notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Yeni bildirim oluştur
+            const notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-md transition-all duration-300 transform translate-x-full';
+            
+            // Bildirim tipine göre stil
+            if (type === 'success') {
+                notification.className += ' bg-green-900/90 border border-green-700 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-900/90 border border-red-700 text-white';
+            } else {
+                notification.className += ' bg-gray-900/90 border border-gray-700 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-1">
+                        <h4 class="font-medium mb-1">${title}</h4>
+                        <p class="text-sm opacity-80">${message}</p>
+                    </div>
+                    <button class="ml-4 text-white/60 hover:text-white" onclick="this.parentElement.parentElement.remove()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animasyon ile göster
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Otomatik kapanma
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Tıklama dinleyicileri ve genel UI
+        document.addEventListener('click', function(e) {
+            const userSearchResults = document.getElementById('userSearchResults');
+            const userSearch = document.getElementById('userSearch');
+            
+            // Kullanıcı arama sonuçları dışında bir yere tıklandığında sonuçları kapat
+            if (!userSearchResults.contains(e.target) && e.target !== userSearch) {
+                userSearchResults.classList.remove('active');
+            }
+        });
+
+        // ESC tuşuna basınca modalları kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeCreateRoomModal();
+                closeJoinRoomModal();
+            }
+        });
+
+        // Join request fonksiyonu
+        function requestJoinRoom(roomId, buttonElement) {
+            // Butonu geçici olarak devre dışı bırak
+            const originalText = buttonElement.textContent;
+            buttonElement.textContent = 'Gönderiliyor...';
+            buttonElement.disabled = true;
+            buttonElement.style.opacity = '0.7';
+            
+            fetch(`/request_join_room/${roomId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Başarılı!', data.message);
+                    // Butonu kalıcı olarak devre dışı bırak
+                    buttonElement.textContent = 'İstek Gönderildi';
+                    buttonElement.disabled = true;
+                    buttonElement.style.opacity = '0.5';
+                    buttonElement.style.cursor = 'not-allowed';
+                } else {
+                    showNotification('error', 'Hata!', data.error);
+                    // Hata durumunda butonu eski haline döndür
+                    buttonElement.textContent = originalText;
+                    buttonElement.disabled = false;
+                    buttonElement.style.opacity = '1';
+                    buttonElement.style.cursor = 'pointer';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Hata!', 'Katılma isteği gönderilirken bir hata oluştu.');
+                // Hata durumunda butonu eski haline döndür
+                buttonElement.textContent = originalText;
+                buttonElement.disabled = false;
+                buttonElement.style.opacity = '1';
+                buttonElement.style.cursor = 'pointer';
+            });
+        }
+
+
+        // Kullanıcının aldığı davetleri yükle
+        function loadMyInvitations() {
+            fetch('/get_my_invitations')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayMyInvitations(data.invitations);
+                } else {
+                    console.error('Davetler yüklenemedi:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading invitations:', error);
+            });
+        }
+
+        // Kullanıcının aldığı davetleri göster
+        function displayMyInvitations(invitations) {
+            const invitationsSection = document.getElementById('room-invitations');
+            const container = document.getElementById('invitations-container');
+            
+            if (invitations.length === 0) {
+                invitationsSection.style.display = 'none';
+            } else {
+                invitationsSection.style.display = 'block';
+                container.innerHTML = '';
+                
+                invitations.forEach(invitation => {
+                    const invitationDiv = document.createElement('div');
+                    invitationDiv.className = 'bg-white/5 border border-white/10 rounded-lg p-4 flex justify-between items-center';
+                    invitationDiv.innerHTML = `
+                        <div>
+                            <h3 class="font-medium text-white">${invitation.room_name}</h3>
+                            <p class="text-sm text-white/60">${invitation.room_description || 'Açıklama eklenmemiş'}</p>
+                            <p class="text-xs text-white/40 mt-1">${invitation.invited_by} tarafından davet edildiniz - ${invitation.created_at}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button class="member-action-btn" onclick="acceptInvitation(${invitation.id})" title="Kabul Et">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </button>
+                            <button class="member-action-btn" onclick="rejectInvitation(${invitation.id})" title="Reddet">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(invitationDiv);
+                });
+            }
+        }
+
+        // Davet kabul et
+        function acceptInvitation(invitationId) {
+            fetch(`/accept_invitation/${invitationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Başarılı!', 'Davet kabul edildi, odaya katıldınız!');
+                    loadMyInvitations(); // Davetleri yenile
+                    setTimeout(() => {
+                        window.location.reload(); // Sayfayı yenile
+                    }, 1000);
+                } else {
+                    showNotification('error', 'Hata!', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Hata!', 'Bir hata oluştu');
+            });
+        }
+
+        // Davet reddet
+        function rejectInvitation(invitationId) {
+            fetch(`/reject_invitation/${invitationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('success', 'Başarılı!', 'Davet reddedildi!');
+                    loadMyInvitations(); // Davetleri yenile
+                } else {
+                    showNotification('error', 'Hata!', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('error', 'Hata!', 'Bir hata oluştu');
+            });
+        }
+
+        // Sayfa yüklendiğinde davetleri kontrol et
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMyInvitations();
+        });
+
+    </script>
+</body>
+</html> 

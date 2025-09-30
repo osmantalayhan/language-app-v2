@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Too Many Attempts - WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+    </style>
+</head>
+<body class="relative bg-black min-h-screen flex items-center justify-center">
+    <div class="noise" style="opacity: 0.15;"></div>
+    
+    <div class="w-full max-w-[400px] mx-auto px-6 text-center">
+        <div class="mb-8">
+            <svg class="w-16 h-16 mx-auto text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+        
+        <h1 class="text-[32px] font-medium mb-4 clash-display">Too Many Attempts</h1>
+        
+        <p class="text-[16px] text-[#999999] mb-6">
+            Your account has been temporarily locked due to multiple failed login attempts. 
+            Please try again in {{ minutes_remaining }} minutes.
+        </p>
+        
+        <p class="text-[14px] text-[#999999] mb-8">
+            For security reasons, we've temporarily restricted access to this account.
+            You can still log in with a different account.
+        </p>
+        
+        <div class="space-y-4">
+            <a href="/login" class="block w-full bg-white text-black px-6 py-3 rounded-full text-[15px] font-medium hover:bg-opacity-90 transition-colors">
+                Try with different account
+            </a>
+            
+            <a href="/" class="block text-[15px] text-[#999999] hover:text-white transition-colors">
+                Return to home
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

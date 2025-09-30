@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+        .gradient-sphere {
+            position: absolute;
+            width: 1200px;
+            height: 1200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+        .glow {
+            position: absolute;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 30%, rgba(0,0,0,0) 70%);
+            filter: blur(60px);
+            border-radius: 100%;
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+        
+        /* Mouse movement effect for main image */
+        .image-tilt {
+            transform-style: preserve-3d;
+            transform: perspective(2000px);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 16px;
+            will-change: transform;
+        }
+        
+        .image-tilt:hover {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .image-tilt-content {
+            transform: translateZ(0);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Enhanced button effect */
+        .button-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            background: linear-gradient(45deg, rgba(255,255,255,1), rgba(255,255,255,0.95));
+        }
+        
+        .button-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255,255,255,0.2) 50%,
+                transparent 100%
+            );
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+        
+        .button-glow:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(255,255,255,0.15);
+        }
+        
+        .button-glow:hover::before {
+            left: 100%;
+        }
+        
+        .button-glow:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Hero heading effects */
+        .hero-heading {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero section background effect */
+        .hero-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, 
+                rgba(255,255,255,0.06) 0%, 
+                rgba(255,255,255,0.03) 20%,
+                rgba(255,255,255,0.015) 30%,
+                transparent 60%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: blur(80px);
+            z-index: 0;
+        }
+
+        .hero-background::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 180%;
+            height: 180%;
+            background: radial-gradient(circle at center, 
+                rgba(255,255,255,0.04) 0%, 
+                rgba(255,255,255,0.015) 30%, 
+                transparent 60%);
+            transform: translate(-50%, -50%);
+            filter: blur(100px);
+            z-index: -1;
+        }
+
+        .hero-line {
+            position: absolute;
+            height: 1px;
+            width: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: lineScan 8s linear infinite;
+            opacity: 0.5;
+            transform: translateY(-50%);
+        }
+
+        @keyframes lineScan {
+            0% {
+                transform: translateY(-50%) translateX(-100%);
+            }
+            100% {
+                transform: translateY(-50%) translateX(100%);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Firefox Scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.02);
+        }
+
+        /* Hide scrollbar on mobile devices */
+        @media (max-width: 768px) {
+            ::-webkit-scrollbar {
+                width: 0px;
+                height: 0px;
+            }
+            * {
+                scrollbar-width: none;
+            }
+        }
+
+        /* Pro Plan Border Animation */
+        .pro-plan-border {
+            position: relative;
+            background: #111111;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+
+        .pro-plan-border::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent,
+                transparent,
+                transparent,
+                rgba(255, 255, 255, 0.1)
+            );
+            animation: rotateBorder 4s linear infinite;
+        }
+
+        .pro-plan-border::after {
+            content: '';
+            position: absolute;
+            inset: 1px;
+            background: #111111;
+            border-radius: 1rem;
+            z-index: 1;
+        }
+
+        @keyframes rotateBorder {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body class="relative bg-black">
+    <div class="noise"></div>
+    
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <!-- Main Gradient Spheres -->
+        <div class="gradient-sphere" style="top: 40%; left: 30%; opacity: 0.6; transform: translate(-50%, -50%) rotate(-15deg);"></div>
+        <div class="gradient-sphere" style="top: 60%; left: 70%; opacity: 0.5; transform: translate(-50%, -50%) rotate(25deg);"></div>
+        
+        <!-- Layered Glow Effects -->
+        <div class="glow w-[800px] h-[800px]" style="top: 30%; left: 40%; opacity: 0.4; transform: translate(-50%, -50%);"></div>
+        <div class="glow w-[600px] h-[600px]" style="top: 70%; left: 60%; opacity: 0.3; transform: translate(-50%, -50%);"></div>
+        
+        <!-- Additional Light Effects -->
+        <div class="absolute w-[1000px] h-[1000px] rounded-full bg-gradient-to-r from-white/[0.02] to-transparent" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-30deg); filter: blur(100px);"></div>
+        <div class="absolute w-[800px] h-[800px] rounded-full bg-gradient-to-l from-white/[0.015] to-transparent" style="top: 40%; left: 60%; transform: translate(-50%, -50%) rotate(45deg); filter: blur(80px);"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 top-0 left-0">
+        <div class="max-w-[1200px] mx-auto px-6 h-[72px] flex items-center justify-between">
+            <div class="flex items-center gap-12">
+                <a href="/" class="flex items-center">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                        <path d="M14 28C21.732 28 28 21.732 28 14C28 6.26801 21.732 0 14 0C6.26801 0 0 6.26801 0 14C0 21.732 6.26801 28 14 28Z" fill="white"/>
+                        <path d="M9 14.5L12.5 18L19 11.5" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                </a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Start</a>
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Features</a>
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Resources</a>
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Help</a>
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Enterprise</a>
+                    <a href="#" class="text-[15px] text-[#999999] hover:text-white transition-colors">Pricing</a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/login" class="text-[15px] text-[#999999] hover:text-white transition-colors">Sign in</a>
+                <a href="/register" class="bg-white text-black px-4 py-2 rounded-full text-[15px] font-medium hover:bg-white/90 transition-colors">
+                    Start for free
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="pt-[180px] pb-[100px] relative overflow-hidden">
+        <!-- Hero Background Effects -->
+        <div class="hero-background"></div>
+
+        <div class="max-w-[1200px] mx-auto px-6 relative">
+            <div class="max-w-[900px] mx-auto text-center">
+                <h1 class="text-[56px] md:text-[96px] leading-[1] tracking-[-0.03em] mb-6 clash-display font-medium hero-heading relative overflow-hidden">
+                    Where AI meets language mastery
+                    <div class="hero-line" style="top: 30%"></div>
+                    <div class="hero-line" style="top: 60%"></div>
+                </h1>
+                
+                <p class="text-[16px] md:text-[20px] text-[#999999] font-light leading-[1.4] mb-12">
+                    Experience the future of language learning, powered by advanced AI
+                </p>
+
+                <div class="flex justify-center">
+                    <a href="/register" class="bg-white text-black px-6 py-3 rounded-full text-[17px] font-medium hover:bg-opacity-90 transition-all duration-300 ease-in-out button-glow">
+                        Start for free
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subtle Accent Lines -->
+        <div class="absolute inset-x-0 top-[30%] h-px bg-gradient-to-r from-transparent via-[#222] to-transparent opacity-30"></div>
+        <div class="absolute inset-x-0 top-[70%] h-px bg-gradient-to-r from-transparent via-[#222] to-transparent opacity-30"></div>
+    </main>
+
+    <!-- Full Width Image Section -->
+    <section class="w-full mb-32">
+        <div class="max-w-[1400px] mx-auto px-6">
+            <div class="aspect-[16/9] rounded-2xl overflow-hidden bg-[#111111] border border-[#222222] image-tilt" id="tiltImage">
+                <!-- Mac Window Controls -->
+                <div class="h-12 bg-[#1A1A1A] border-b border-[#222222] flex items-center px-4 gap-2 image-tilt-content">
+                    <div class="w-3 h-3 rounded-full bg-[#FF5F57]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#FEBC2E]"></div>
+                    <div class="w-3 h-3 rounded-full bg-[#28C840]"></div>
+                    <div class="ml-4 flex items-center gap-2">
+                        <div class="w-32 h-6 rounded-md bg-[#222222]"></div>
+                        <div class="w-6 h-6 rounded-md bg-[#222222]"></div>
+                    </div>
+                </div>
+                <!-- Content Area -->
+                <div class="w-full h-[calc(100%-48px)] bg-black relative image-tilt-content">
+                    <img src="../static/images/s.png" alt="WordSpace Uygulama Arayüzü" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="w-full mb-32 relative overflow-hidden">
+        <!-- Background Effects -->
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute w-[800px] h-[800px] bg-[#222222] rounded-full blur-[120px] opacity-20 -top-[400px] -left-[200px]"></div>
+            <div class="absolute w-[600px] h-[600px] bg-[#222222] rounded-full blur-[120px] opacity-20 -bottom-[300px] -right-[100px]"></div>
+        </div>
+
+        <div class="max-w-[1400px] mx-auto px-6 relative">
+            <div class="rounded-2xl p-12 border border-[#222222]">
+                <canvas id="learningChart" class="w-full" style="height: 600px;"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chart.js Script -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('learningChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['1 Hafta', '2 Hafta', '3 Hafta', '4 Hafta', '5 Hafta', '6 Hafta', '7 Hafta', '8 Hafta'],
+                datasets: [
+                    {
+                        label: 'AI ile Öğrenme',
+                        data: [10, 35, 65, 85, 110, 140, 175, 220],
+                        borderColor: '#ffffff',
+                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#ffffff',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Geleneksel Öğrenme',
+                        data: [10, 25, 40, 52, 65, 78, 90, 105],
+                        borderColor: '#333333',
+                        backgroundColor: 'transparent',
+                        tension: 0.4,
+                        fill: false,
+                        borderDash: [5, 5],
+                        pointBackgroundColor: '#333333',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            color: '#999999',
+                            font: {
+                                family: 'Inter',
+                                size: 14
+                            },
+                            boxWidth: 15,
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#000000',
+                        titleColor: '#ffffff',
+                        bodyColor: '#999999',
+                        borderColor: '#222222',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + ' kelime';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#222222',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                family: 'Inter',
+                                size: 13
+                            },
+                            padding: 15,
+                            callback: function(value) {
+                                return value + ' kelime';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#222222',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#666666',
+                            font: {
+                                family: 'Inter',
+                                size: 13
+                            },
+                            padding: 10
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+    <!-- Features Section -->
+    <section class="py-20 relative overflow-hidden">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <!-- Feature Grid -->
+            <div class="space-y-20">
+                <!-- Feature 1 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <h3 class="text-[32px] md:text-[40px] font-medium leading-tight tracking-[-0.02em]">
+                            Set the right access for every role with one click.
+                        </h3>
+                        <p class="text-[18px] text-[#999999] leading-relaxed">
+                            Custom permissions give you full control—decide who can design on canvas, edit the CMS, and publish your site.
+                        </p>
+                    </div>
+                    <div class="rounded-2xl overflow-hidden bg-gradient-to-br from-[#111111] to-[#222222] border border-[#333333] shadow-2xl aspect-square">
+                        <div class="w-full h-full flex items-center justify-center p-8">
+                            [Permissions interface görseli]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="order-2 md:order-1 rounded-2xl overflow-hidden bg-gradient-to-br from-[#111111] to-[#222222] border border-[#333333] shadow-2xl aspect-square">
+                        <div class="w-full h-full flex items-center justify-center p-8">
+                            [Version history görseli]
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2 space-y-6">
+                        <h3 class="text-[32px] md:text-[40px] font-medium leading-tight tracking-[-0.02em]">
+                            Test and collaborate on a staging domain.
+                        </h3>
+                        <p class="text-[18px] text-[#999999] leading-relaxed">
+                            Work together by previewing and testing changes on a staging domain before going live. Every publish creates a new version, making it easy to review, refine, and revert with one click.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6">
+                        <h3 class="text-[32px] md:text-[40px] font-medium leading-tight tracking-[-0.02em]">
+                            Access and edit your site's content in just one click.
+                        </h3>
+                        <p class="text-[18px] text-[#999999] leading-relaxed">
+                            The CMS is built into your published site or staging link, making content updates quick.
+                        </p>
+                    </div>
+                    <div class="rounded-2xl overflow-hidden bg-gradient-to-br from-[#111111] to-[#222222] border border-[#333333] shadow-2xl aspect-square">
+                        <div class="w-full h-full flex items-center justify-center p-8">
+                            [Quick edit görseli]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-16">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-[40px] md:text-[56px] leading-[1.1] font-medium tracking-[-0.02em] mb-8">
+                    Simple, transparent pricing
+                </h2>
+                <p class="text-[20px] text-[#999999] font-normal">
+                    Start free, upgrade when you're ready
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <!-- Free Plan -->
+                <div class="bg-[#111111] rounded-2xl p-10 border border-[#222222] hover:border-[#333333] transition-colors">
+                    <div class="mb-10">
+                        <h3 class="text-[24px] font-medium mb-3">Free</h3>
+                        <p class="text-[#999999] text-[15px] mb-8">Perfect for getting started</p>
+                        <div class="flex items-baseline">
+                            <span class="text-[40px] font-medium">$0</span>
+                            <span class="text-[#999999] ml-2">/month</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-5 mb-10">
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            100 words per month
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Basic AI features
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Community support
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                            Basic progress tracking
+                        </li>
+                    </ul>
+                    <a href="/register" class="block w-full bg-white text-black text-center px-6 py-4 rounded-full text-[15px] font-medium hover:bg-white/90 transition-colors">
+                        Get started
+                    </a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pro-plan-border relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                        <span class="bg-white text-black text-[13px] font-medium px-4 py-1.5 rounded-full shadow-lg">
+                            Most popular
+                        </span>
+                    </div>
+                    <div class="relative z-[2] p-10">
+                        <div class="mb-10">
+                            <h3 class="text-[24px] font-medium mb-3">Pro</h3>
+                            <p class="text-[#999999] text-[15px] mb-8">For serious language learners</p>
+                            <div class="flex items-baseline">
+                                <span class="text-[40px] font-medium">$15</span>
+                                <span class="text-[#999999] ml-2">/month</span>
+                            </div>
+                        </div>
+                        <ul class="space-y-5 mb-10">
+                            <li class="flex items-center text-[15px]">
+                                <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Unlimited words
+                            </li>
+                            <li class="flex items-center text-[15px]">
+                                <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Advanced AI features
+                            </li>
+                            <li class="flex items-center text-[15px]">
+                                <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Priority support
+                            </li>
+                            <li class="flex items-center text-[15px]">
+                                <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Custom study plans
+                            </li>
+                        </ul>
+                        <a href="/register" class="block w-full bg-white text-black text-center px-6 py-4 rounded-full text-[15px] font-medium hover:bg-white/90 transition-colors">
+                            Get started
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-[#111111] rounded-2xl p-10 border border-[#222222] hover:border-[#333333] transition-colors">
+                    <div class="mb-10">
+                        <h3 class="text-[24px] font-medium mb-3">Enterprise</h3>
+                        <p class="text-[#999999] text-[15px] mb-8">For teams and organizations</p>
+                        <div class="flex items-baseline">
+                            <span class="text-[40px] font-medium">Custom</span>
+                        </div>
+                    </div>
+                    <ul class="space-y-5 mb-10">
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Everything in Pro
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Team collaboration
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Dedicated support
+                        </li>
+                        <li class="flex items-center text-[15px]">
+                            <svg class="w-5 h-5 mr-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            Custom integrations
+                        </li>
+                    </ul>
+                    <a href="/contact" class="block w-full bg-white text-black text-center px-6 py-4 rounded-full text-[15px] font-medium hover:bg-white/90 transition-colors">
+                        Contact sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-[#222222]">
+        <div class="max-w-[1200px] mx-auto px-6">
+            <div class="grid md:grid-cols-5 gap-12">
+                <!-- Brand Column -->
+                <div class="md:col-span-2">
+                    <!-- <a href="/" class="inline-block mb-6">
+                        <img src="{{ url_for('static', filename='images/openai.png') }}" alt="OpenAI Logo" class="h-8">
+                    </a> -->
+                    <h1>WordenceAI</h1>
+                    <p class="text-[15px] text-[#999999] mb-8 leading-relaxed">
+                        WordSpace is revolutionizing language learning through AI, making it more efficient and personalized than ever before.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <a href="https://linkedin.com/company/wordspace" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#111111] border border-[#222222] hover:border-white/20 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="https://discord.gg/wordspace" target="_blank" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#111111] border border-[#222222] hover:border-white/20 transition-colors">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0 12.64 12.64 0 00-.617-1.25.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057 19.9 19.9 0 005.993 3.03.078.078 0 00.084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 00-.041-.106 13.107 13.107 0 01-1.872-.892.077.077 0 01-.008-.128 10.2 10.2 0 00.372-.292.074.074 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 01.078.01c.12.098.246.198.373.292a.077.077 0 01-.006.127 12.299 12.299 0 01-1.873.892.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028 19.839 19.839 0 006.002-3.03.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="mt-6 flex flex-col gap-4">
+                        <p class="text-[14px] text-[#999999]">Login options:</p>
+                        <div class="flex items-center gap-4">
+                            <a href="{{ url_for('google_login') }}" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-[#111111] border border-[#222222] hover:border-white/20 transition-colors">
+                                <img src="{{ url_for('static', filename='images/google.png') }}" alt="Google Login" class="w-8 h-8 object-contain">
+                                <span class="text-[14px] text-white">Login with Google</span>
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-4 py-2 rounded-lg bg-[#111111] border border-[#222222] opacity-50 hover:opacity-100 transition-opacity cursor-not-allowed" title="GitHub login coming soon">
+                                <img src="{{ url_for('static', filename='images/github.png') }}" alt="GitHub Login" class="w-8 h-8 object-contain">
+                                <span class="text-[14px] text-white">Login with GitHub</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h4 class="text-[15px] font-medium mb-4">Product</h4>
+                    <div class="space-y-3">
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Features</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Enterprise</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Security</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Pricing</a>
+                    </div>
+                </div>
+
+                <!-- Resources -->
+                <div>
+                    <h4 class="text-[15px] font-medium mb-4">Resources</h4>
+                    <div class="space-y-3">
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Documentation</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Guides</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Blog</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Support</a>
+                    </div>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-[15px] font-medium mb-4">Company</h4>
+                    <div class="space-y-3">
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">About</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Careers</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Contact</a>
+                        <a href="#" class="block text-[15px] text-[#999999] hover:text-white transition-colors">Press</a>
+                    </div>
+                </div>
+        </div>
+
+            <!-- Bottom Bar -->
+            <div class="mt-20 pt-8 border-t border-[#222222] flex flex-col md:flex-row justify-between items-center">
+                <p class="text-[14px] text-[#999999]">© 2024 WordSpace. Developer Team by Wordence</p>
+                <div class="flex items-center gap-6">
+                    <a href="{{ url_for('privacy_policy') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="{{ url_for('terms_of_service') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Terms of Service</a>
+                    <a href="{{ url_for('cookie_policy') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Cookie Policy</a>
+                    <a href="{{ url_for('version') }}" class="text-[14px] text-[#999999] hover:text-white transition-colors">Version History</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Add this script before closing body tag -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tiltElement = document.getElementById('tiltImage');
+            let frameId;
+            let currentX = 0;
+            let currentY = 0;
+            let targetX = 0;
+            let targetY = 0;
+            
+            tiltElement.addEventListener('mousemove', function(e) {
+                const rect = tiltElement.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                targetX = (x - centerX) / 80;
+                targetY = (y - centerY) / 80;
+            });
+            
+            tiltElement.addEventListener('mouseleave', function() {
+                targetX = 0;
+                targetY = 0;
+            });
+
+            function animate() {
+                const dx = targetX - currentX;
+                const dy = targetY - currentY;
+                
+                currentX += dx * 0.2;
+                currentY += dy * 0.2;
+                
+                tiltElement.style.transform = `perspective(2000px) rotateY(${currentX}deg) rotateX(${-currentY}deg)`;
+                
+                frameId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            return () => {
+                cancelAnimationFrame(frameId);
+            };
+        });
+    </script>
+</body>
+</html> 

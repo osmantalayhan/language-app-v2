@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Noise Effect */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        /* Gradient Spheres */
+        .gradient-sphere {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-title svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        .settings-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 10px 12px;
+            width: 100%;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .form-select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 10px 12px;
+            width: 100%;
+            color: #fff;
+            font-size: 14px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Select option stilini ekle */
+        .form-select option {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .form-option-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-option {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .form-option:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-option.selected {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #fff;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background-color: #000;
+        }
+
+        /* Save Button */
+        .save-button {
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .save-button:hover {
+            opacity: 0.9;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin: 20px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            color: rgba(34, 197, 94, 0.9);
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            color: rgba(59, 130, 246, 0.9);
+        }
+
+        /* Settings Item */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+
+        .settings-item-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .settings-item-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+            max-width: 80%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Gradient Spheres -->
+    <div class="gradient-sphere" style="top: 20%; left: 30%;"></div>
+    <div class="gradient-sphere" style="top: 60%; left: 70%;"></div>
+
+    <div class="container">
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="logo-container mb-6">
+                    <img src="{{ url_for('static', filename='images/openai.png') }}" alt="WordSpace Logo" class="logo-image" width="140">
+                </div>
+                <nav>
+                    <!-- Ana Menü -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Ana Menü</div>
+                        <a href="/dashboard" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                            Kelimelerim
+                        </a>
+                        <a href="/saved_words" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Kayıtlı Kelimeler
+                        </a>
+                    </div>
+
+                    <!-- Odalar -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Çalışma Odaları</div>
+                        <a href="/rooms" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            Tüm Odalar
+                        </a>
+                        <a href="#" class="menu-item" onclick="location.href='/rooms';return false;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Yeni Oda
+                        </a>
+                    </div>
+
+                    <!-- Diğer -->
+                    <div class="menu-category">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Diğer</div>
+                        <a href="/statistics" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20V10"/>
+                                <path d="M18 20V4"/>
+                                <path d="M6 20v-4"/>
+                            </svg>
+                            İstatistikler
+                        </a>
+                        <a href="/profile" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Profil
+                        </a>
+                        <a href="/settings" class="menu-item active">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                            Ayarlar
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="section-header">
+                    <h2 class="section-title">Ayarlar</h2>
+                </div>
+
+                <!-- Settings Form -->
+                <form id="settingsForm" action="/update-settings" method="POST">
+                    <div id="settingsSuccess" class="alert alert-success hidden">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                        Ayarlarınız başarıyla kaydedildi!
+                    </div>
+
+                    <!-- Language Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+                                <path d="M2 12h20"/>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                            Dil Ayarları
+                        </h3>
+                        <p class="settings-description">Dil öğrenme deneyiminizi özelleştirin.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="language_level">Dil Seviyeniz</label>
+                            <select class="form-select" id="language_level" name="language_level">
+                                <option value="A1" {% if user.language_level == 'A1' %}selected{% endif %}>A1 - Başlangıç</option>
+                                <option value="A2" {% if user.language_level == 'A2' %}selected{% endif %}>A2 - Temel</option>
+                                <option value="B1" {% if user.language_level == 'B1' %}selected{% endif %}>B1 - Orta Alt</option>
+                                <option value="B2" {% if user.language_level == 'B2' %}selected{% endif %}>B2 - Orta Üst</option>
+                                <option value="C1" {% if user.language_level == 'C1' %}selected{% endif %}>C1 - İleri</option>
+                                <option value="C2" {% if user.language_level == 'C2' %}selected{% endif %}>C2 - Uzman</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Kelime Önerileri</label>
+                            <div class="form-option-group">
+                                <div class="form-option selected">
+                                    <span>Seviyeme Göre</span>
+                                </div>
+                                <div class="form-option">
+                                    <span>Tüm Seviyelerden</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Goals Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20v-6"/>
+                                <path d="M6 20V10"/>
+                                <path d="M18 20V4"/>
+                            </svg>
+                            Günlük Hedefler
+                        </h3>
+                        <p class="settings-description">Her gün öğrenmek istediğiniz kelime sayısını belirleyin.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="daily_goal">Günlük Kelime Hedefi</label>
+                            <select class="form-select" id="daily_goal" name="daily_goal">
+                                <option value="5" {% if user.daily_goal == 5 %}selected{% endif %}>5 kelime/gün</option>
+                                <option value="10" {% if user.daily_goal == 10 %}selected{% endif %}>10 kelime/gün</option>
+                                <option value="15" {% if user.daily_goal == 15 %}selected{% endif %}>15 kelime/gün</option>
+                                <option value="20" {% if user.daily_goal == 20 %}selected{% endif %}>20 kelime/gün</option>
+                                <option value="30" {% if user.daily_goal == 30 %}selected{% endif %}>30 kelime/gün</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Notification Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                            </svg>
+                            Bildirim Ayarları
+                        </h3>
+                        <p class="settings-description">Bildirim tercihlerinizi yönetin.</p>
+                        
+                        <div class="settings-item">
+                            <div>
+                                <div class="settings-item-label">E-posta Bildirimleri</div>
+                                <div class="settings-item-description">Günlük hatırlatıcılar ve önerilerle öğrenme alışkanlığınızı sürdürün.</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="email_notifications" {% if user.email_notifications == 'Daily' %}checked{% endif %}>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div>
+                                <div class="settings-item-label">Tarayıcı Bildirimleri</div>
+                                <div class="settings-item-description">Çalışma zamanlarınızda tarayıcı bildirimleri alın.</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="browser_notifications" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Appearance Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M12 5v1M12 18v1M5 12H4M20 12h-1M18.7 5.3l-.7.7M6 6l-.7-.7M18.7 18.7l-.7-.7M6 18l-.7.7"/>
+                            </svg>
+                            Görünüm
+                        </h3>
+                        <p class="settings-description">Uygulama görünümünü özelleştirin.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Tema</label>
+                            <div class="form-option-group">
+                                <div class="form-option selected">
+                                    <span>Karanlık</span>
+                                </div>
+                                <div class="form-option">
+                                    <span>Aydınlık</span>
+                                </div>
+                                <div class="form-option">
+                                    <span>Sistem</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div>
+                                <div class="settings-item-label">Animasyonları Azalt</div>
+                                <div class="settings-item-description">Daha sade bir görsel deneyim için animasyonları azaltın.</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" name="reduce_animations">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Account Settings -->
+                    <div class="settings-section">
+                        <h3 class="settings-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Hesap Ayarları
+                        </h3>
+                        <p class="settings-description">Kişisel hesap bilgilerinizi yönetin.</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="email">E-posta Adresi</label>
+                            <input type="email" class="form-input" id="email" name="email" value="{{ user.email }}" {% if user.google_id %}disabled{% endif %}>
+                            {% if user.google_id %}
+                            <div class="text-xs text-gray-500 mt-1">Google hesabınızla giriş yaptığınız için e-posta adresinizi değiştiremezsiniz.</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="settings-item">
+                            <div>
+                                <div class="settings-item-label">Hesabımı Sil</div>
+                                <div class="settings-item-description">Tüm hesap verilerinizi ve kelime listenizi kalıcı olarak silin.</div>
+                            </div>
+                            <button type="button" class="px-3 py-1.5 text-xs bg-transparent text-red-500 border border-red-500/20 rounded hover:bg-red-500/10 transition-colors">
+                                Hesabı Sil
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="save-button">Ayarları Kaydet</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form submission
+        document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                const response = await fetch('/update-settings', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Show success message
+                    const successAlert = document.getElementById('settingsSuccess');
+                    successAlert.classList.remove('hidden');
+                    
+                    // Hide after 3 seconds
+                    setTimeout(() => {
+                        successAlert.classList.add('hidden');
+                    }, 3000);
+                } else {
+                    // Handle error
+                    alert(result.error || 'Ayarlar kaydedilirken bir hata oluştu.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Bağlantı hatası. Lütfen tekrar deneyin.');
+            }
+        });
+        
+        // Toggle form options
+        const formOptions = document.querySelectorAll('.form-option');
+        formOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from siblings
+                const siblings = this.parentElement.querySelectorAll('.form-option');
+                siblings.forEach(sibling => sibling.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html> 

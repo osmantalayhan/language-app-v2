@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - WordSpace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link href="https://fonts.cdnfonts.com/css/neue-machina" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Clash Display';
+            src: url('https://fonts.cdnfonts.com/css/clash-display') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+        .neue-machina {
+            font-family: 'Neue Machina', sans-serif;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+        .gradient-sphere {
+            position: absolute;
+            width: 1200px;
+            height: 1200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+        .form-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at center, 
+                rgba(255,255,255,0.03) 0%, 
+                rgba(255,255,255,0.015) 20%,
+                rgba(255,255,255,0.008) 30%,
+                transparent 60%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: blur(60px);
+            z-index: 0;
+        }
+        .input-field {
+            background: rgba(24, 24, 24, 0.6);
+            border: 1px solid #333;
+            color: white;
+        }
+        
+        .input-field:focus {
+            border-color: #666;
+        }
+        
+        .input-field::placeholder {
+            color: #999;
+        }
+
+        select.input-field {
+            background: rgba(24, 24, 24, 0.6);
+            border: 1px solid #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        select.input-field option {
+            background: #1a1a1a;
+            color: white;
+        }
+        .button-glow {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(45deg, rgba(255,255,255,1), rgba(255,255,255,0.95));
+        }
+        .button-glow::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                rgba(255,255,255,0.2) 50%,
+                transparent 100%
+            );
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+        }
+        .button-glow:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(255,255,255,0.15);
+        }
+        .button-glow:hover::before {
+            left: 100%;
+        }
+        .button-glow:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Enhanced Background Effects */
+        .animated-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(45, 45, 45, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(45, 45, 45, 0.1) 0%, transparent 50%);
+            animation: pulse 10s ease infinite alternate;
+        }
+
+        .line-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.02) 50%,
+                transparent 100%
+            );
+            animation: moveLine 15s linear infinite;
+        }
+
+        .line:nth-child(1) { top: 20%; animation-delay: 0s; }
+        .line:nth-child(2) { top: 40%; animation-delay: -5s; }
+        .line:nth-child(3) { top: 60%; animation-delay: -10s; }
+        .line:nth-child(4) { top: 80%; animation-delay: -15s; }
+
+        .glow-orb {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.02) 0%,
+                rgba(255, 255, 255, 0.01) 30%,
+                transparent 70%
+            );
+            filter: blur(60px);
+            animation: float-orb 20s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        @keyframes moveLine {
+            0% { transform: translateX(-100%) skewX(-15deg); }
+            100% { transform: translateX(100%) skewX(-15deg); }
+        }
+
+        @keyframes float-orb {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-50px); }
+        }
+
+        /* Minimal Light Effects */
+        .light-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .particle-group {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: particleMove 20s linear infinite;
+            opacity: 0;
+        }
+
+        .particle-group:nth-child(1) { animation-delay: 0s; }
+        .particle-group:nth-child(2) { animation-delay: -5s; }
+        .particle-group:nth-child(3) { animation-delay: -10s; }
+        .particle-group:nth-child(4) { animation-delay: -15s; }
+
+        .light-particle {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+        }
+
+        .wave {
+            position: absolute;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: waveExpand 8s ease-out infinite;
+        }
+
+        .wave:nth-child(1) { animation-delay: 0s; }
+        .wave:nth-child(2) { animation-delay: -2s; }
+        .wave:nth-child(3) { animation-delay: -4s; }
+        .wave:nth-child(4) { animation-delay: -6s; }
+
+        @keyframes particleMove {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes waveExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.5;
+            }
+            100% {
+                width: 900px;
+                height: 900px;
+                opacity: 0;
+            }
+        }
+
+        /* Minimal Shadow Effect */
+        .form-shadow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .shadow-orb {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle at center,
+                rgba(255, 255, 255, 0.03) 0%,
+                rgba(255, 255, 255, 0.015) 30%,
+                transparent 70%
+            );
+            filter: blur(80px);
+            opacity: 0.6;
+            transition: all 3s ease-in-out;
+        }
+
+        .shadow-orb:nth-child(1) {
+            top: 10%;
+            left: 15%;
+            animation: floatShadow 20s ease-in-out infinite;
+        }
+
+        .shadow-orb:nth-child(2) {
+            bottom: 10%;
+            right: 15%;
+            animation: floatShadow 20s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatShadow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, 30px); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Firefox Scrollbar */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.02);
+        }
+
+        /* Hide scrollbar on mobile devices */
+        @media (max-width: 768px) {
+            ::-webkit-scrollbar {
+                width: 0px;
+                height: 0px;
+            }
+            * {
+                scrollbar-width: none;
+            }
+        }
+
+        /* Custom Checkbox Style */
+        .custom-checkbox {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .custom-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: relative;
+            height: 18px;
+            width: 18px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .custom-checkbox:hover .checkmark {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .custom-checkbox input:checked ~ .checkmark {
+            background: #fff;
+            border-color: #fff;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 3px;
+            width: 4px;
+            height: 8px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+    </style>
+</head>
+<body class="relative bg-black min-h-screen flex items-center justify-center py-12">
+    <div class="noise" style="opacity: 0.15;"></div>
+    <div class="animated-gradient"></div>
+    
+    <!-- Line Effects -->
+    <div class="line-effect">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+
+    <!-- Glow Orbs -->
+    <div class="glow-orb" style="top: 30%; left: 30%;"></div>
+    <div class="glow-orb" style="top: 70%; left: 70%; animation-delay: -10s;"></div>
+    
+    <!-- Background Effects -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="gradient-sphere" style="top: 30%; left: 20%; opacity: 0.25; transform: translate(-50%, -50%) rotate(-15deg); filter: blur(100px);"></div>
+        <div class="gradient-sphere" style="top: 70%; left: 80%; opacity: 0.15; transform: translate(-50%, -50%) rotate(25deg); filter: blur(120px);"></div>
+    </div>
+
+    <!-- Light Particles Effect -->
+    <div class="light-particles">
+        <div class="particle-group">
+            <div class="light-particle" style="left: 20%; top: 30%;"></div>
+            <div class="light-particle" style="left: 80%; top: 60%;"></div>
+            <div class="light-particle" style="left: 40%; top: 80%;"></div>
+            <div class="light-particle" style="left: 60%; top: 20%;"></div>
+            <div class="light-particle" style="left: 30%; top: 50%;"></div>
+        </div>
+        <div class="particle-group">
+            <div class="light-particle" style="left: 70%; top: 40%;"></div>
+            <div class="light-particle" style="left: 25%; top: 70%;"></div>
+            <div class="light-particle" style="left: 50%; top: 30%;"></div>
+            <div class="light-particle" style="left: 85%; top: 50%;"></div>
+            <div class="light-particle" style="left: 15%; top: 60%;"></div>
+        </div>
+        <div class="particle-group">
+            <div class="light-particle" style="left: 45%; top: 45%;"></div>
+            <div class="light-particle" style="left: 75%; top: 25%;"></div>
+            <div class="light-particle" style="left: 35%; top: 65%;"></div>
+            <div class="light-particle" style="left: 65%; top: 75%;"></div>
+            <div class="light-particle" style="left: 90%; top: 35%;"></div>
+        </div>
+    </div>
+
+    <!-- Wave Effect -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- Shadow Effect -->
+    <div class="form-shadow">
+        <div class="shadow-orb"></div>
+        <div class="shadow-orb"></div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="w-full max-w-[400px] mx-auto px-6 relative">
+        <div class="form-background"></div>
+        
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <!-- <a href="/" class="inline-block">
+                <img src="{{ url_for('static', filename='images/openai.png') }}" alt="OpenAI Logo" class="h-8 mx-auto">
+            </a> -->
+            <span>WordenceAI</span>
+        </div>
+
+        <!-- Form Title -->
+        <h1 class="text-[32px] font-medium mb-2 text-center clash-display">Create your account</h1>
+        <p class="text-[15px] text-[#999999] text-center mb-8">Start your language learning journey today</p>
+
+        <!-- Form -->
+        <form action="{{ url_for('register') }}" method="post" class="space-y-4">
+            <!-- Google Sign Up Button -->
+            <a href="{{ url_for('google_login') }}" class="w-full h-12 rounded-xl text-white font-medium border border-[#333] hover:border-white/40 transition-all flex items-center justify-center gap-3 group">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M21.35,11.1H12.18V13.83H18.69C18.36,17.64 15.19,19.27 12.19,19.27C8.36,19.27 5,16.25 5,12C5,7.9 8.2,4.73 12.2,4.73C15.29,4.73 17.1,6.7 17.1,6.7L19,4.72C19,4.72 16.56,2 12.1,2C6.42,2 2.03,6.8 2.03,12C2.03,17.05 6.16,22 12.25,22C17.6,22 21.5,18.33 21.5,12.91C21.5,11.76 21.35,11.1 21.35,11.1Z"/>
+                </svg>
+                Sign up with Google
+            </a>
+
+            <!-- Divider -->
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-[#333]"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-4 text-[13px] text-[#999999] bg-black">or sign up with email</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-[13px] font-medium mb-2" for="firstName">First name</label>
+                    <input type="text" name="username" id="firstName" class="w-full h-12 px-4 rounded-xl text-white input-field focus:outline-none" placeholder="Enter first name" required>
+                </div>
+                <div>
+                    <label class="block text-[13px] font-medium mb-2" for="lastName">Last name</label>
+                    <input type="text" name="lastName" id="lastName" class="w-full h-12 px-4 rounded-xl text-white input-field focus:outline-none" placeholder="Enter last name">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[13px] font-medium mb-2" for="email">Email address</label>
+                <input type="email" name="email" id="email" class="w-full h-12 px-4 rounded-xl text-white input-field focus:outline-none" placeholder="Enter your email" required>
+            </div>
+            <div>
+                <label class="block text-[13px] font-medium mb-2" for="password">Password</label>
+                <input type="password" name="password" id="password" class="w-full h-12 px-4 rounded-xl text-white input-field focus:outline-none" placeholder="Create a password" required>
+                <p class="mt-2 text-[13px] text-[#999999]">Must be at least 8 characters long</p>
+            </div>
+            <div>
+                <label class="block text-[13px] font-medium mb-2" for="confirmPassword">Confirm password</label>
+                <input type="password" name="confirm_password" id="confirmPassword" class="w-full h-12 px-4 rounded-xl text-white input-field focus:outline-none" placeholder="Confirm your password" required>
+            </div>
+            <div class="mb-6">
+                <label class="custom-checkbox">
+                    <input type="checkbox" name="terms" required>
+                    <span class="checkmark"></span>
+                    <span class="text-[13px] text-[#999999]">
+                        I agree to the <a href="{{ url_for('terms_of_service') }}" class="text-white hover:text-[#999999] transition-colors">Terms of Service</a>, 
+                        <a href="{{ url_for('privacy_policy') }}" class="text-white hover:text-[#999999] transition-colors">Privacy Policy</a>, and 
+                        <a href="{{ url_for('cookie_policy') }}" class="text-white hover:text-[#999999] transition-colors">Cookie Policy</a>
+                    </span>
+                </label>
+            </div>
+            <button type="submit" class="w-full h-12 rounded-xl text-black font-medium button-glow">
+                Create account
+            </button>
+        </form>
+        
+        <!-- Sign in Link -->
+        <p class="mt-8 text-center text-[14px] text-[#999999]">
+            Already have an account? 
+            <a href="/login" class="text-white hover:text-[#999999] transition-colors">Sign in</a>
+        </p>
+    </div>
+</body>
+</html> 

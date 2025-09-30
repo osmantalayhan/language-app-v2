@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordSpace - Dil Öğrenme</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Gradient Spheres -->
+    <div class="gradient-sphere" style="top: 20%; left: 30%;"></div>
+    <div class="gradient-sphere" style="top: 60%; left: 70%;"></div>
+
+    <div class="container">
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="logo-container mb-6">
+                    <img src="{{ url_for('static', filename='images/openai.png') }}" alt="WordSpace Logo" class="logo-image" width="140">
+                </div>
+                <nav>
+                    <!-- Ana Menü -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Ana Menü</div>
+                        <a href="/dashboard" class="menu-item active">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                </svg>
+                        Kelimelerim
+                    </a>
+                        <a href="/saved_words" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Kayıtlı Kelimeler
+                        </a>
+                       
+                    </div>
+
+                    <!-- Odalar -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Çalışma Odaları</div>
+                        <a href="/rooms" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                            Tüm Odalar
+                        </a>
+                        <a href="/my-rooms" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14"/>
+                                <path d="M12 5v14"/>
+                            </svg>
+                            Yeni Oda
+                        </a>
+                    </div>
+
+                    <!-- Diğer -->
+                    <div class="menu-category">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Diğer</div>
+                        <a href="/leaderboard" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 20h4V9H6v11zM14 20h4v-7h-4v7zM2 20h4v-5H2v5z"/>
+                            </svg>
+                            Liderlik Tablosu
+                        </a>
+                        <a href="/statistics" class="menu-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10"/>
+                            <path d="M18 20V4"/>
+                            <path d="M6 20v-4"/>
+                </svg>
+                        İstatistikler
+                    </a>
+                        <a href="/profile" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Profil
+                        </a>
+                        <a href="/settings" class="menu-item">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                        Ayarlar
+                    </a>
+                    </div>
+                </nav>
+        </div>
+        
+            <!-- Main Content -->
+            <div class="content-area">
+                <div class="header-bar">
+                    <!-- Daily Goals Button -->
+                    <button class="daily-goals-btn" onclick="toggleDailyGoalsModal()">
+                        <div class="goals-btn-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <div class="goals-btn-content">
+                            <span class="goals-btn-title">Günlük Hedef</span>
+                            <div class="goals-btn-progress-bar">
+                                <div class="goals-btn-progress-fill" id="btnProgressFill"></div>
+                            </div>
+                        </div>
+                        <div class="goals-btn-percentage" id="btnPercentage">30%</div>
+                    </button>
+                    
+                    <div class="header-actions">
+                        <button class="header-btn search-btn" onclick="toggleSearch()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                        </button>
+                        
+                        <!-- Search Input (Hidden by default) -->
+                        <div class="search-dropdown" id="searchDropdown" style="display: none;">
+                            <input type="text" class="search-input" placeholder="Kelime ara..." id="searchInput">
+        </div>
+                        
+
+                        
+                        <div class="action-group">
+                            <button class="header-btn" title="Filtreleme Seçenekleri" onclick="alert('Filtreleme özelliği yakında eklenecek!');">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                </svg>
+                            </button>
+                            
+                            <button class="header-btn" title="Sırala" onclick="toggleSort()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 6h16"></path>
+                                    <path d="M4 12h10"></path>
+                                    <path d="M4 18h6"></path>
+                                </svg>
+                            </button>
+
+                            <div class="divider"></div>
+                            
+                            <button class="header-btn" title="Öğrenme Durumu" onclick="toggleLearningStatus()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </button>
+                            
+                            <button class="header-btn active" title="Quiz Modu" onclick="startQuizMode()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 11l3 3L22 4"/>
+                                    <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <button class="add-word-button" onclick="openAddWordModal()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                            Kelime Ekle
+            </button>
+                </div>
+        </div>
+
+                <!-- Word Cards -->
+                <div class="word-grid">
+                    {% if words %}
+                        {% for word in words %}
+                        <div class="word-card" onclick="goToWordDetail({{ word.id }})">
+                            <div class="word-card-header">
+                                <div class="word-main-info">
+                            <h3 class="word-title">{{ word.english }}</h3>
+                            <p class="word-translation">{{ word.turkish }}</p>
+                                </div>
+                                <div class="word-level">{{ word.level }}</div>
+                            </div>
+                            <div class="word-card-actions">
+                            <div class="word-footer">
+                                <button class="icon-btn" onclick="event.stopPropagation(); playAudio('{{ word.english }}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                                        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    </svg>
+                </button>
+                                <button class="icon-btn" onclick="event.stopPropagation(); markAsReview({{ word.id }})">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 4v6h6"/>
+                                        <path d="M23 20v-6h-6"/>
+                                        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10"/>
+                                        <path d="M3.51 15a9 9 0 0 0 14.85 3.36L23 14"/>
+                    </svg>
+                </button>
+                                <button class="icon-btn save-btn" id="save-btn-{{ word.id }}" onclick="event.stopPropagation(); toggleSaveWord({{ word.id }})">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </button>
+                                <button class="icon-btn" onclick="event.stopPropagation(); showDeleteModal(event, {{ word.id }})">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M3 6h18"/>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                        <line x1="10" y1="11" x2="10" y2="17"/>
+                                        <line x1="14" y1="11" x2="14" y2="17"/>
+                    </svg>
+            </button>
+                                </div>
+            </div>
+        </div>
+                        {% endfor %}
+                    {% else %}
+                        <!-- Empty State Cards -->
+                        {% if not words %}
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13c-1.168-.776-2.754-1.253-4.5-1.253-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                                </div>
+                                <h3 class="empty-state-title">Henüz kelime eklemediniz</h3>
+                                <p class="empty-state-description">Kelime ekleyerek öğrenmeye başlayabilirsiniz</p>
+                                <button class="empty-state-button" onclick="openAddWordModal()">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="12" y1="5" x2="12" y2="19"/>
+                                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                                    İlk Kelimeyi Ekle
+                </button>
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Word Modal -->
+    <div id="addWordModal" class="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title clash-display">Kelime Ekle</h3>
+                <button onclick="closeAddWordModal()" class="modal-close">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                </div>
+            
+            <form id="addWordForm" onsubmit="addWord(event)" class="modal-form">
+                <div class="form-group">
+                    <label for="englishWord" class="form-label">İngilizce Kelime</label>
+                    <input type="text" id="englishWord" name="english" required 
+                           class="form-input"
+                           placeholder="örn. beautiful">
+            </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" id="addWordBtn" class="button-primary">
+                        <span id="addWordBtnText">Ekle</span>
+                        <span id="addWordBtnLoading" class="hidden">Ekleniyor...</span>
+                    </button>
+                    <button type="button" onclick="closeAddWordModal()" class="button-secondary">
+                        İptal
+                    </button>
+        </div>
+            </form>
+            
+            <div id="addWordError" class="error-message hidden"></div>
+            <div id="addWordSuccess" class="success-message hidden"></div>
+        </div>
+    </div>
+
+    <!-- Daily Goals Modal -->
+    <div id="dailyGoalsModal" class="modal-overlay daily-goals-modal-overlay">
+        <div class="modal-content daily-goals-modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Günlük Hedefler</h3>
+                <button class="modal-close" onclick="closeDailyGoalsModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                
+                <!-- Daily Word Goal -->
+                <div class="goal-item">
+                    <div class="goal-header">
+                        <span class="goal-label">Günlük Kelime Hedefi</span>
+                        <span class="goal-progress-text">
+                            <span id="modalCurrentWords">3</span> / <span id="modalTargetWords">10</span> kelime
+                        </span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="modalWordsProgressFill" style="width: 30%"></div>
+                        </div>
+                        <div class="progress-percentage" id="modalWordsPercentage">30%</div>
+                    </div>
+                </div>
+                
+                <!-- Goal Setting Dropdown -->
+                <div class="goal-setting">
+                    <label class="setting-label">Günlük Kelime Hedefi</label>
+                    <select class="goal-select" id="modalDailyGoalSelect" onchange="updateDailyGoal()">
+                        <option value="5">5 kelime/gün</option>
+                        <option value="10" selected>10 kelime/gün</option>
+                        <option value="15">15 kelime/gün</option>
+                        <option value="20">20 kelime/gün</option>
+                        <option value="30">30 kelime/gün</option>
+                    </select>
+                </div>
+                
+                <!-- Streak Counter -->
+                <div class="streak-section">
+                    <div class="streak-item">
+                        <div class="streak-icon-svg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                        <div class="streak-info">
+                            <span class="streak-number" id="modalStreakCount">7</span>
+                            <span class="streak-label">gün üst üste</span>
+                        </div>
+                    </div>
+                    <div class="streak-item">
+                        <div class="streak-icon-svg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                            </svg>
+                        </div>
+                        <div class="streak-info">
+                            <span class="streak-number" id="modalWeeklyTotal">45</span>
+                            <span class="streak-label">bu hafta toplam</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="modalTotalWordsLearned">127</span>
+                        <span class="stat-label">Toplam Öğrenilen</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="modalAverageDaily">8.5</span>
+                        <span class="stat-label">Günlük Ortalama</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-backdrop">
+        <div class="delete-modal-content">
+            <div class="delete-modal-title">Kelimeyi Sil</div>
+            <div class="delete-modal-body">
+                Bu kelimeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </div>
+            <div class="delete-modal-actions">
+                <button id="modal-cancel" class="modal-btn-cancel">İptal</button>
+                <button id="modal-delete" class="modal-btn-delete">Sil</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+                <script>
+        // Search toggle functionality
+        function toggleSearch() {
+            const dropdown = document.getElementById('searchDropdown');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+                searchBtn.classList.add('active');
+                // Focus on input after a short delay
+                setTimeout(() => {
+                    document.getElementById('searchInput').focus();
+                }, 100);
+            } else {
+                dropdown.style.display = 'none';
+                searchBtn.classList.remove('active');
+            }
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('searchDropdown');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            if (!searchBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+                searchBtn.classList.remove('active');
+            }
+        });
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const wordCards = document.querySelectorAll('.word-card');
+            
+            wordCards.forEach(card => {
+                const title = card.querySelector('.word-title').textContent.toLowerCase();
+                const translation = card.querySelector('.word-translation').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || translation.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+        
+        // Daily Goals System
+        let dailyGoal = 10;
+        let currentWords = 3; // This would come from backend
+        
+        // Daily Goals Modal Functions
+        function toggleDailyGoalsModal() {
+            const modal = document.getElementById('dailyGoalsModal');
+            const btn = document.querySelector('.daily-goals-btn');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            // Get button position
+            const btnRect = btn.getBoundingClientRect();
+            
+            // Position modal below button
+            modalContent.style.top = (btnRect.bottom + 10) + 'px';
+            modalContent.style.left = btnRect.left + 'px';
+            
+            modal.style.display = 'block';
+            
+            // Sync modal data with button data
+            syncModalData();
+        }
+        
+        function closeDailyGoalsModal() {
+            const modal = document.getElementById('dailyGoalsModal');
+            modal.style.display = 'none';
+        }
+        
+        function syncModalData() {
+            // Sync all elements
+            document.getElementById('modalCurrentWords').textContent = currentWords;
+            document.getElementById('modalTargetWords').textContent = dailyGoal;
+            document.getElementById('modalDailyGoalSelect').value = dailyGoal;
+            
+            // Update modal progress bar
+            updateModalProgress();
+        }
+        
+        function updateDailyGoal() {
+            const select = document.getElementById('modalDailyGoalSelect');
+            dailyGoal = parseInt(select.value);
+            
+            // Update all displays
+            document.getElementById('modalTargetWords').textContent = dailyGoal;
+            
+            // Recalculate progress
+            updateProgress();
+            updateModalProgress();
+            
+            // Save to backend
+            fetch('/api/update-daily-goal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dailyGoal: dailyGoal
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Daily goal updated:', dailyGoal);
+                } else {
+                    console.error('Failed to update daily goal:', data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error updating daily goal:', error);
+            });
+        }
+        
+        function updateProgress() {
+            const percentage = Math.min((currentWords / dailyGoal) * 100, 100);
+            
+            // Update button percentage
+            document.getElementById('btnPercentage').textContent = Math.round(percentage) + '%';
+            
+            // Update button progress bar
+            const progressFill = document.getElementById('btnProgressFill');
+            progressFill.style.width = percentage + '%';
+            
+            // Change color based on completion
+            if (percentage >= 100) {
+                progressFill.classList.add('completed');
+                document.getElementById('btnPercentage').style.color = '#22c55e';
+            } else {
+                progressFill.classList.remove('completed');
+                document.getElementById('btnPercentage').style.color = '#22c55e';
+            }
+        }
+        
+        function updateModalProgress() {
+            const percentage = Math.min((currentWords / dailyGoal) * 100, 100);
+            const progressFill = document.getElementById('modalWordsProgressFill');
+            const progressText = document.getElementById('modalWordsPercentage');
+            
+            // Animate progress bar
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = Math.round(percentage) + '%';
+            
+            // Update progress color - only green when 100%
+            if (percentage >= 100) {
+                progressText.style.color = '#22c55e';
+                progressFill.style.background = 'linear-gradient(90deg, #22c55e, #16a34a)';
+            } else {
+                progressText.style.color = '#22c55e';
+                progressFill.style.background = 'rgba(255, 255, 255, 0.3)';
+            }
+        }
+        
+        function simulateWordAdded() {
+            currentWords++;
+            if (document.getElementById('modalCurrentWords')) {
+                document.getElementById('modalCurrentWords').textContent = currentWords;
+            }
+            updateProgress();
+            updateModalProgress();
+            
+            // Animate the button progress bar
+            const progressFill = document.getElementById('btnProgressFill');
+            progressFill.style.transform = 'scaleX(1.05)';
+            setTimeout(() => {
+                progressFill.style.transform = 'scaleX(1)';
+            }, 300);
+        }
+        
+        // Load daily goals data on page load
+        function loadDailyGoalsData() {
+            // Get real data from backend
+            fetch('/api/daily-stats')
+                .then(response => response.json())
+                .then(data => {
+                    currentWords = data.currentWords || 0;
+                    dailyGoal = data.dailyGoal || 10;
+                    
+                    // Update modal UI (if exists)
+                    if (document.getElementById('modalCurrentWords')) {
+                        document.getElementById('modalCurrentWords').textContent = data.currentWords || 0;
+                        document.getElementById('modalTargetWords').textContent = data.dailyGoal || 10;
+                        document.getElementById('modalDailyGoalSelect').value = data.dailyGoal || 10;
+                        document.getElementById('modalStreakCount').textContent = data.streakCount || 0;
+                        document.getElementById('modalWeeklyTotal').textContent = data.weeklyTotal || 0;
+                        document.getElementById('modalTotalWordsLearned').textContent = data.totalWordsLearned || 0;
+                        document.getElementById('modalAverageDaily').textContent = data.averageDaily || '0.0';
+                    }
+                    
+                    updateProgress();
+                })
+                .catch(error => {
+                    console.log('Using fallback data:', error);
+                    // Fallback data
+                    const fallbackData = {
+                        currentWords: {{ words|length if words else 0 }},
+                        dailyGoal: 10,
+                        streakCount: 0,
+                        weeklyTotal: {{ words|length if words else 0 }},
+                        totalWordsLearned: {{ words|length if words else 0 }},
+                        averageDaily: {{ "%.1f"|format((words|length / 7) if words and words|length > 0 else 0) }}
+                    };
+                    
+                    currentWords = fallbackData.currentWords;
+                    dailyGoal = fallbackData.dailyGoal;
+                    
+                    // Update modal UI with fallback data
+                    if (document.getElementById('modalCurrentWords')) {
+                        document.getElementById('modalCurrentWords').textContent = fallbackData.currentWords;
+                        document.getElementById('modalTargetWords').textContent = fallbackData.dailyGoal;
+                        document.getElementById('modalDailyGoalSelect').value = fallbackData.dailyGoal;
+                        document.getElementById('modalStreakCount').textContent = fallbackData.streakCount;
+                        document.getElementById('modalWeeklyTotal').textContent = fallbackData.weeklyTotal;
+                        document.getElementById('modalTotalWordsLearned').textContent = fallbackData.totalWordsLearned;
+                        document.getElementById('modalAverageDaily').textContent = fallbackData.averageDaily;
+                    }
+                    
+                    updateProgress();
+                });
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('dailyGoalsModal');
+            const btn = document.querySelector('.daily-goals-btn');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            // Close if clicked outside modal and not on button
+            if (modal.style.display === 'block' && 
+                !modalContent.contains(event.target) && 
+                !btn.contains(event.target)) {
+                closeDailyGoalsModal();
+            }
+        });
+        
+        // Initialize daily goals when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDailyGoalsData();
+        });
+        
+        // Test function for console
+        window.testProgress = function(words) {
+            currentWords = words;
+            updateProgress();
+            updateModalProgress();
+            console.log(`Progress updated to ${words}/${dailyGoal} words (${Math.round((words/dailyGoal)*100)}%)`);
+        };
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordSpace - {{ room.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.cdnfonts.com/css/clash-display" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Noise Effect */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSIzMDAiIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1Ii8+PC9zdmc+');
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        /* Gradient Spheres */
+        .gradient-sphere {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            mix-blend-mode: plus-lighter;
+        }
+
+        .clash-display {
+            font-family: 'Clash Display', sans-serif;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 32px;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 32px;
+            height: fit-content;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        /* Logo Styles */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-image {
+            max-width: 100%;
+            height: auto;
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .logo-image:hover {
+            opacity: 1;
+            transform: scale(1.02);
+        }
+
+        /* Menu Categories */
+        .menu-category {
+            margin-bottom: 20px;
+        }
+
+        .menu-category:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Content Area */
+        .content-area {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        /* Header Bar Styles */
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .app-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .app-title::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Word Cards */
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 1400px) {
+            .word-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .word-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .word-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .word-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .word-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px 18px;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .word-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .word-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+        }
+
+        .word-title {
+            font-size: 22px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 6px;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .word-translation {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 18px;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            font-weight: 400;
+        }
+
+        .word-level {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            font-size: 11px;
+            font-weight: 400;
+            background: rgba(0, 0, 0, 0.5);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 3px 10px;
+            border-radius: 30px;
+            letter-spacing: 0.04em;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .click-details {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: auto;
+            text-align: center;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .word-footer {
+            display: flex;
+            justify-content: space-around;
+            margin-top: auto;
+            padding-top: 14px;
+        }
+
+        .icon-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .icon-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .icon-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .save-btn.active svg {
+            fill: currentColor;
+        }
+
+        /* Level Badge */
+        .level-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Level Badges - Monochrome Style */
+        .level-a1 {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .level-a2 {
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .level-b1 {
+            background: rgba(255, 255, 255, 0.14);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .level-b2 {
+            background: rgba(255, 255, 255, 0.16);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .level-c1 {
+            background: rgba(255, 255, 255, 0.18);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .level-c2 {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* User Avatars */
+        .user-avatars {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        /* Section Headers */
+        .section-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab:hover {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .tab.active {
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Members List */
+        .members-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            transition: all 0.2s ease;
+        }
+
+        .member-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        .member-role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .member-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .member-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .member-action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .member-action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-family: 'Clash Display', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        .modal-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 15px;
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Danger zone */
+        .danger-zone {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 8px;
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .danger-zone-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(239, 68, 68, 0.9);
+            margin-bottom: 8px;
+        }
+
+        .danger-zone-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: rgba(239, 68, 68, 0.9);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            color: rgba(239, 68, 68, 1);
+        }
+
+        /* User Search */
+        .user-search-container {
+            position: relative;
+        }
+
+        .user-search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(30, 30, 30, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .user-search-results.active {
+            display: block;
+        }
+
+        .user-search-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-search-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Selected Users */
+        .selected-users {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .selected-user {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 4px 12px 4px 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .selected-user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        .remove-user {
+            margin-left: 4px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+        }
+
+        .remove-user:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Noise Texture -->
+    <div class="noise"></div>
+
+    <!-- Gradient Spheres -->
+    <div class="gradient-sphere" style="top: 20%; left: 30%;"></div>
+    <div class="gradient-sphere" style="top: 60%; left: 70%;"></div>
+
+    <div class="container">
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="logo-container mb-6">
+                    <img src="{{ url_for('static', filename='images/openai.png') }}" alt="WordSpace Logo" class="logo-image" width="140">
+                </div>
+                <nav>
+                    <!-- Ana Menü -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Ana Menü</div>
+                        <a href="/dashboard" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            </svg>
+                            Kelimelerim
+                        </a>
+                        <a href="/saved_words" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Kayıtlı Kelimeler
+                        </a>
+                    </div>
+
+                    <!-- Odalar -->
+                    <div class="menu-category mb-3">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Çalışma Odaları</div>
+                        <a href="/rooms" class="menu-item active">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                            Tüm Odalar
+                        </a>
+                        <a href="#" class="menu-item" onclick="location.href='/rooms';return false;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 5v14M5 12h14"/>
+                            </svg>
+                            Yeni Oda
+                        </a>
+                    </div>
+
+                    <!-- Diğer -->
+                    <div class="menu-category">
+                        <div class="text-xs text-white/40 uppercase tracking-wider px-4 mb-2">Diğer</div>
+                        <a href="/statistics" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20V10"/>
+                                <path d="M18 20V4"/>
+                                <path d="M6 20v-4"/>
+                            </svg>
+                            İstatistikler
+                        </a>
+                        <a href="/profile" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            Profil
+                        </a>
+                        <a href="/settings" class="menu-item">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                            Ayarlar
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <!-- Room Header -->
+                <div class="header-bar">
+                    <div>
+                        <h1 class="app-title">{{ room.name }}</h1>
+                        <p class="text-white/60 mt-2">{{ room.description or 'Bu oda için açıklama eklenmemiş.' }}</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="/rooms" class="btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                            </svg>
+                            Odalara Dön
+                        </a>
+                        {% if is_admin %}
+                        <button class="btn-primary" onclick="openEditRoomModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            Odayı Düzenle
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Room Tabs -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="words">Kelimeler</div>
+                    <div class="tab" data-tab="members">Üyeler</div>
+                    {% if is_admin %}
+                    <div class="tab" data-tab="requests">Katılma İstekleri</div>
+                    {% endif %}
+                    {% if is_admin %}
+                    <div class="tab" data-tab="settings">Ayarlar</div>
+                    {% endif %}
+                </div>
+
+                <!-- Words Tab -->
+                <div id="words-tab" class="tab-content">
+                    <div class="word-grid">
+                        {% if words %}
+                            {% for word in words %}
+                                <div class="word-card" onclick="location.href='/word/{{ word.id }}'">
+                                    <div class="word-level">{{ word.level|default('A1', true) }}</div>
+                                    <h3 class="word-title">{{ word.english }}</h3>
+                                    <p class="word-translation">{{ word.turkish }}</p>
+                                    <div class="click-details">Detaylar için tıklayın</div>
+                                    <div class="word-footer">
+                                        <button class="icon-btn" onclick="event.stopPropagation(); playAudio('{{ word.english }}')">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <path d="M10 8l6 4-6 4V8z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" onclick="event.stopPropagation(); markAsReview({{ word.id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10"/>
+                                                <polyline points="12 6 12 12 16 14"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn save-btn" id="save-btn-{{ word.id }}" onclick="event.stopPropagation(); toggleSaveWord({{ word.id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                            </svg>
+                                        </button>
+                                        <button class="icon-btn" onclick="event.stopPropagation(); showDeleteWordModal({{ word.id }})">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                                <line x1="14" y1="11" x2="14" y2="17"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-span-full p-6 rounded-lg border border-white/10 bg-white/5 text-center">
+                                <div class="flex flex-col items-center justify-center gap-4">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-white/20">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                        <line x1="9" y1="3" x2="9" y2="21"/>
+                                    </svg>
+                                    <h3 class="text-xl font-medium text-white/80">Henüz kelime eklenmemiş</h3>
+                                    <p class="text-white/50 max-w-md">Üyelerin eklediği kelimeler burada görünecek.</p>
+                                    <a href="/dashboard" class="btn-primary mt-4">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 5v14M5 12h14"/>
+                                        </svg>
+                                        Kelime Ekle
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Members Tab -->
+                <div id="members-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Oda Üyeleri</h3>
+                        {% if is_admin %}
+                        <button class="btn-primary" onclick="openInviteMembersModal()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <line x1="20" y1="8" x2="20" y2="14"/>
+                                <line x1="23" y1="11" x2="17" y2="11"/>
+                            </svg>
+                            Üye Ekle
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="members-list">
+                        {% for member in members %}
+                            <div class="member-item">
+                                <div class="user-avatar">{{ member.username[0] }}</div>
+                                <div class="member-info">
+                                    <div class="member-name">{{ member.username }}</div>
+                                    <div class="member-role">
+                                        {% if room.created_by == member.id %}
+                                            Oda Yöneticisi
+                                        {% else %}
+                                            Üye
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% if is_admin and room.created_by != member.id and member.id != current_user.id %}
+                                <div class="member-actions">
+                                    <button class="member-action-btn" onclick="removeMember('{{ member.id }}')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M18 6L6 18M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Settings Tab (Only for admin) -->
+                {% if is_admin %}
+                <div id="settings-tab" class="tab-content hidden">
+                    <div class="bg-white/5 border border-white/10 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-medium mb-4">Oda Ayarları</h3>
+                        <p class="text-white/60 mb-4">Bu sayfadan oda ayarlarını düzenleyebilir, üye ekleyebilir veya odayı silebilirsiniz.</p>
+                        
+                        <div class="flex gap-3 mt-6">
+                            <button class="btn-primary" onclick="openEditRoomModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Oda Bilgilerini Düzenle
+                            </button>
+                            <button class="btn-primary" onclick="openInviteMembersModal()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="8.5" cy="7" r="4"/>
+                                    <line x1="20" y1="8" x2="20" y2="14"/>
+                                    <line x1="23" y1="11" x2="17" y2="11"/>
+                                </svg>
+                                Üye Ekle
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="danger-zone">
+                        <h3 class="danger-zone-title">Tehlikeli Bölge</h3>
+                        <p class="danger-zone-description">Bu işlemler geri alınamaz. Dikkatli olun!</p>
+                        <button class="btn-danger" onclick="deleteRoom()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mr-2">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2"></path>
+                            </svg>
+                            <span>Odayı Sil</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Join Requests Tab (Only for admin) -->
+                <div id="requests-tab" class="tab-content hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-medium">Katılma İstekleri</h3>
+                        <button class="btn-primary" onclick="refreshJoinRequests()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 4v6h6"/>
+                                <path d="M23 20v-6h-6"/>
+                                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10"/>
+                                <path d="M3.51 15a9 9 0 0 0 14.85 3.36L23 14"/>
+                            </svg>
+                            Yenile
+                        </button>
+                    </div>
+                    
+                    <div id="join-requests-container" class="members-list">
+                        <!-- Join requests will be loaded here -->
+                    </div>
+                    
+                    <div id="no-join-requests" class="col-span-full p-6 rounded-lg border border-white/10 bg-white/5 text-center" style="display: none;">
+                        <div class="flex flex-col items-center justify-center gap-4">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" class="text-white/20">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                <circle cx="8.5" cy="7" r="4"/>
+                                <line x1="20" y1="8" x2="20" y2="14"/>
+                                <line x1="23" y1="11" x2="17" y2="11"/>
+                            </svg>
+                            <h3 class="text-xl font-medium text-white/80">Henüz katılma isteği yok</h3>
+                            <p class="text-white/50 max-w-md">Kullanıcıların gönderdiği katılma istekleri burada görünecek.</p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Room Modal -->
+    <div id="editRoomModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Odayı Düzenle</h3>
+                <button class="modal-close" onclick="closeEditRoomModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="editRoomForm">
+                <div class="form-group">
+                    <label for="roomName" class="form-label">Oda Adı</label>
+                    <input type="text" id="roomName" class="form-control" placeholder="Oda adı" value="{{ room.name }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="roomDescription" class="form-label">Açıklama (İsteğe Bağlı)</label>
+                    <textarea id="roomDescription" class="form-control" placeholder="Oda hakkında kısa bir açıklama yazın...">{{ room.description or '' }}</textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-4 py-2 border border-white/10 text-white/70 rounded-lg hover:bg-white/5 transition-all" onclick="closeEditRoomModal()">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-white/10 text-white border border-white/10 rounded-lg hover:bg-white/15 transition-all">Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Invite Members Modal -->
+    <div id="inviteMembersModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Üye Ekle</h3>
+                <button class="modal-close" onclick="closeInviteMembersModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="inviteMembersForm">
+                <div class="form-group">
+                    <label for="userSearch" class="form-label">Kullanıcı Ara</label>
+                    <div class="user-search-container">
+                        <input type="text" id="userSearch" class="form-control" placeholder="Kullanıcı adı veya e-posta ile ara...">
+                        <div id="userSearchResults" class="user-search-results"></div>
+                    </div>
+                    <div id="selectedUsers" class="selected-users"></div>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-4 py-2 border border-white/10 text-white/70 rounded-lg hover:bg-white/5 transition-all" onclick="closeInviteMembersModal()">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-white/10 text-white border border-white/10 rounded-lg hover:bg-white/15 transition-all">Üyeleri Ekle</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Global değişkenler
+        let selectedUsers = [];
+        const roomId = "{{ room.id }}";
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab'ları aktifleştir
+            setupTabs();
+            
+            // Settings tab seçildiyse katılım isteklerini yükle
+            const tabParam = getUrlParameter('tab');
+            if (tabParam === 'settings') {
+                document.querySelector('.tab[data-tab="settings"]').click();
+                loadPendingInvitations();
+            }
+        });
+        
+        // URL'den parametre alma yardımcı fonksiyonu
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Tab'ları aktifleştir
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Aktif tab'ı değiştir
+                    tabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // İçerikleri göster/gizle
+                    const tabId = this.getAttribute('data-tab');
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.add('hidden');
+                    });
+                    document.getElementById(tabId + '-tab').classList.remove('hidden');
+                    
+                    // Settings tab'ı aktif edildiyse katılım isteklerini yükle
+                    if (tabId === 'settings') {
+                        loadPendingInvitations();
+                    }
+                });
+            });
+        }
+        
+        // Bekleyen katılım isteklerini yükle
+        async function loadPendingInvitations() {
+            try {
+                const container = document.getElementById('pending-invitations-container');
+                
+                const response = await fetch(`/get_room_invitations/${roomId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.invitations.length > 0) {
+                        // İstekleri listele
+                        container.innerHTML = '';
+                        
+                        data.invitations.forEach(invitation => {
+                            const invitationEl = document.createElement('div');
+                            invitationEl.className = 'p-4 bg-white/5 border border-white/10 rounded-lg flex items-center justify-between mb-2';
+                            
+                            // İsteğin tipini belirle (davet mi, katılım isteği mi)
+                            const requestType = invitation.is_join_request ? 
+                                '<span class="bg-blue-900/30 text-blue-300 text-xs px-2 py-1 rounded">Katılım İsteği</span>' : 
+                                `<span class="bg-purple-900/30 text-purple-300 text-xs px-2 py-1 rounded">${invitation.invited_by} tarafından davet edildi</span>`;
+                            
+                            invitationEl.innerHTML = `
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-sm font-medium">
+                                        ${invitation.username.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center gap-2">
+                                            <h3 class="text-base font-medium">${invitation.username}</h3>
+                                            ${requestType}
+                                        </div>
+                                        <p class="text-xs text-white/50">${invitation.email}</p>
+                                        <p class="text-xs text-white/40 mt-1">${invitation.created_at}</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="px-3 py-1 text-xs bg-white/10 hover:bg-white/15 text-white/80 rounded-md transition-all" 
+                                            onclick="rejectInvitation(${invitation.id}, ${invitation.is_join_request})">
+                                        Reddet
+                                    </button>
+                                    <button class="px-3 py-1 text-xs bg-white/20 hover:bg-white/30 text-white rounded-md transition-all" 
+                                            onclick="acceptInvitation(${invitation.id}, ${invitation.is_join_request})">
+                                        Kabul Et
+                                    </button>
+                                </div>
+                            `;
+                            
+                            container.appendChild(invitationEl);
+                        });
+                    } else {
+                        // İstek yoksa
+                        container.innerHTML = `
+                            <div class="p-6 border border-white/10 rounded-lg text-center">
+                                <svg class="mx-auto h-12 w-12 text-white/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                </svg>
+                                <p class="mt-2 text-white/50">Bekleyen katılım isteği bulunmuyor</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    container.innerHTML = `
+                        <div class="p-4 bg-red-900/20 border border-red-900/30 rounded-lg">
+                            <p class="text-red-300">${data.error || 'Davetler yüklenirken bir hata oluştu'}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading invitations:', error);
+                document.getElementById('pending-invitations-container').innerHTML = `
+                    <div class="p-4 bg-red-900/20 border border-red-900/30 rounded-lg">
+                        <p class="text-red-300">Bağlantı hatası. Lütfen tekrar deneyin.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Daveti kabul et
+        async function acceptInvitation(invitationId, isJoinRequest) {
+            try {
+                const endpoint = isJoinRequest ? 
+                    `/approve_join_request/${invitationId}` : 
+                    `/accept_invitation/${invitationId}`;
+                    
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Başarılı', 'Davet kabul edildi ve kullanıcı odaya eklendi', 'success');
+                    loadPendingInvitations(); // Listeyi yenile
+                } else {
+                    showNotification('Hata', data.error || 'Davet kabul edilirken bir hata oluştu', 'error');
+                }
+            } catch (error) {
+                console.error('Error accepting invitation:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            }
+        }
+        
+        // Daveti reddet
+        async function rejectInvitation(invitationId, isJoinRequest) {
+            try {
+                const endpoint = isJoinRequest ? 
+                    `/reject_join_request/${invitationId}` : 
+                    `/reject_invitation/${invitationId}`;
+                    
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Bilgi', 'Davet reddedildi', 'info');
+                    loadPendingInvitations(); // Listeyi yenile
+                } else {
+                    showNotification('Hata', data.error || 'Davet reddedilirken bir hata oluştu', 'error');
+                }
+            } catch (error) {
+                console.error('Error rejecting invitation:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            }
+        }
+        
+        // Bildirim gösterme fonksiyonu
+        function showNotification(title, message, type = "info") {
+            // Mevcut bildirimi kaldır
+            const existingNotification = document.getElementById('notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Yeni bildirim oluştur
+            const notification = document.createElement('div');
+            notification.id = 'notification';
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 max-w-md transition-all duration-300 transform translate-x-full';
+            
+            // Bildirim tipine göre stil
+            if (type === 'success') {
+                notification.className += ' bg-green-900/90 border border-green-700 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-900/90 border border-red-700 text-white';
+            } else {
+                notification.className += ' bg-gray-900/90 border border-gray-700 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-start">
+                    <div class="flex-1">
+                        <h4 class="font-medium mb-1">${title}</h4>
+                        <p class="text-sm opacity-80">${message}</p>
+                    </div>
+                    <button class="ml-4 text-white/60 hover:text-white" onclick="this.parentElement.parentElement.remove()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animasyon ile göster
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 10);
+            
+            // Otomatik kapanma
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }
+            }, 5000);
+        }
+
+        // Edit Room Modal Functions
+        function openEditRoomModal() {
+            document.getElementById('editRoomModal').classList.add('active');
+        }
+        
+        function closeEditRoomModal() {
+            document.getElementById('editRoomModal').classList.remove('active');
+        }
+        
+        // Handle edit room form submission
+        document.getElementById('editRoomForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const roomName = document.getElementById('roomName').value.trim();
+            const roomDescription = document.getElementById('roomDescription').value.trim();
+            
+            if (!roomName) {
+                showNotification('Hata', 'Oda adı boş olamaz', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/update_room/${roomId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: roomName,
+                        description: roomDescription
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Başarılı', 'Oda bilgileri güncellendi', 'success');
+                    closeEditRoomModal();
+                    // Sayfayı yenile
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification('Hata', data.error || 'Oda güncellenirken bir hata oluştu', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating room:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            }
+        });
+        
+        // Invite Members Modal Functions
+        function openInviteMembersModal() {
+            document.getElementById('inviteMembersModal').classList.add('active');
+            document.getElementById('userSearch').focus();
+        }
+        
+        function closeInviteMembersModal() {
+            document.getElementById('inviteMembersModal').classList.remove('active');
+            document.getElementById('userSearch').value = '';
+            document.getElementById('userSearchResults').innerHTML = '';
+            document.getElementById('userSearchResults').classList.remove('active');
+        }
+        
+        // Kullanıcı arama
+        document.getElementById('userSearch').addEventListener('input', debounce(searchUsers, 300));
+        
+        function debounce(func, delay) {
+            let timeout;
+            return function() {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
+        
+        // Kullanıcı arama
+        async function searchUsers() {
+            const query = document.getElementById('userSearch').value.trim();
+            const resultsContainer = document.getElementById('userSearchResults');
+            
+            if (query.length < 2) {
+                resultsContainer.classList.remove('active');
+                resultsContainer.innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/search_users?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                
+                if (data.success && data.users.length > 0) {
+                    resultsContainer.innerHTML = '';
+                    
+                    data.users.forEach(user => {
+                        // Kullanıcı zaten seçilmişse gösterme
+                        if (selectedUsers.some(u => u.id === user.id)) return;
+                        
+                        const userItem = document.createElement('div');
+                        userItem.className = 'user-search-item';
+                        userItem.innerHTML = `
+                            <div class="user-avatar">${user.username.charAt(0)}</div>
+                            <div class="user-info">
+                                <div class="user-name">${user.username}</div>
+                                <div class="user-email">${user.email}</div>
+                            </div>
+                        `;
+                        userItem.addEventListener('click', () => {
+                            addSelectedUser(user);
+                            resultsContainer.classList.remove('active');
+                            document.getElementById('userSearch').value = '';
+                        });
+                        
+                        resultsContainer.appendChild(userItem);
+                    });
+                    
+                    resultsContainer.classList.add('active');
+                } else {
+                    resultsContainer.innerHTML = '<div class="p-3 text-sm text-white/50">Kullanıcı bulunamadı</div>';
+                    resultsContainer.classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error searching users:', error);
+                resultsContainer.innerHTML = '<div class="p-3 text-sm text-red-300">Arama sırasında bir hata oluştu</div>';
+                resultsContainer.classList.add('active');
+            }
+        }
+        
+        // Kullanıcı ekleme/çıkarma
+        function addSelectedUser(user) {
+            if (selectedUsers.some(u => u.id === user.id)) return;
+            
+            selectedUsers.push(user);
+            updateSelectedUsersList();
+        }
+        
+        function removeSelectedUser(userId) {
+            selectedUsers = selectedUsers.filter(user => user.id !== userId);
+            updateSelectedUsersList();
+        }
+        
+        function updateSelectedUsersList() {
+            const container = document.getElementById('selectedUsers');
+            container.innerHTML = '';
+            
+            selectedUsers.forEach(user => {
+                const userItem = document.createElement('div');
+                userItem.className = 'selected-user';
+                userItem.innerHTML = `
+                    <div class="selected-user-avatar">${user.username.charAt(0)}</div>
+                    <span>${user.username}</span>
+                    <span class="remove-user" onclick="removeSelectedUser(${user.id})">×</span>
+                `;
+                container.appendChild(userItem);
+            });
+        }
+        
+        // Üye ekleme formu
+        document.getElementById('inviteMembersForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (selectedUsers.length === 0) {
+                showNotification('Hata', 'Lütfen en az bir kullanıcı seçin', 'error');
+                return;
+            }
+            
+            try {
+                const promises = selectedUsers.map(user => 
+                    fetch(`/invite_to_room/${roomId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            user_id: user.id
+                        })
+                    }).then(res => res.json())
+                );
+                
+                const results = await Promise.all(promises);
+                
+                // Hata var mı kontrol et
+                const hasError = results.some(result => !result.success);
+                
+                if (!hasError) {
+                    showNotification('Başarılı', 'Davetler başarıyla gönderildi', 'success');
+                    closeInviteMembersModal();
+                    selectedUsers = [];
+                    updateSelectedUsersList();
+                } else {
+                    // Hataları göster
+                    const errors = results.filter(result => !result.success).map(result => result.error);
+                    showNotification('Hata', errors.join(', '), 'error');
+                }
+            } catch (error) {
+                console.error('Error inviting members:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            }
+        });
+        
+        // Oda silme
+        function deleteRoom() {
+            if (confirm('Bu odayı silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+                fetch(`/delete_room/${roomId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Başarılı', 'Oda başarıyla silindi', 'success');
+                        setTimeout(() => {
+                            window.location.href = '/rooms';
+                        }, 1000);
+                    } else {
+                        showNotification('Hata', data.error || 'Oda silinirken bir hata oluştu', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting room:', error);
+                    showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+                });
+            }
+        }
+        
+        // Üye çıkarma
+        function removeMember(userId) {
+            if (confirm('Bu üyeyi odadan çıkarmak istediğinize emin misiniz?')) {
+                fetch(`/remove_member/${roomId}/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Başarılı', 'Üye odadan çıkarıldı', 'success');
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Hata', data.error || 'Üye çıkarılırken bir hata oluştu', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error removing member:', error);
+                    showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+                });
+            }
+        }
+        
+        // Tıklama dinleyicileri
+        document.addEventListener('click', function(e) {
+            const userSearchResults = document.getElementById('userSearchResults');
+            const userSearch = document.getElementById('userSearch');
+            
+            // Kullanıcı arama sonuçları dışında bir yere tıklandığında sonuçları kapat
+            if (userSearchResults && userSearch && !userSearchResults.contains(e.target) && e.target !== userSearch) {
+                userSearchResults.classList.remove('active');
+            }
+        });
+        
+        // ESC tuşuna basılınca modalları kapat
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditRoomModal();
+                closeInviteMembersModal();
+            }
+        });
+
+        // Audio çalma fonksiyonu
+        function playAudio(word) {
+            event.stopPropagation();
+            try {
+                if ('speechSynthesis' in window) {
+                    // Önce konuşmayı durdur
+                    speechSynthesis.cancel();
+                    
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.8; // Biraz yavaş konuş
+                    utterance.pitch = 1.0;
+                    utterance.volume = 1.0;
+                    
+                    speechSynthesis.speak(utterance);
+                } else {
+                    alert('Tarayıcınız ses özelliğini desteklemiyor.');
+                }
+            } catch (error) {
+                console.error('Error in playAudio function:', error);
+                alert('Ses çalma işleminde bir hata oluştu.');
+            }
+        }
+        
+        // İnceleme için işaretle
+        function markAsReview(wordId) {
+            event.stopPropagation();
+            fetch(`/mark_review/${wordId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Başarılı', 'Kelime inceleme için işaretlendi', 'success');
+                } else {
+                    showNotification('Hata', data.error || 'İşlem sırasında bir hata oluştu', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            });
+        }
+        
+        // Kaydetme/favorilere ekleme
+        function toggleSaveWord(wordId) {
+            event.stopPropagation();
+            fetch(`/toggle_save_word/${wordId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const saveBtn = document.getElementById(`save-btn-${wordId}`);
+                    if (data.is_saved) {
+                        saveBtn.classList.add('active');
+                        showNotification('Başarılı', 'Kelime favorilere eklendi', 'success');
+                    } else {
+                        saveBtn.classList.remove('active');
+                        showNotification('Bilgi', 'Kelime favorilerden çıkarıldı', 'info');
+                    }
+                } else {
+                    showNotification('Hata', data.error || 'İşlem sırasında bir hata oluştu', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            });
+        }
+
+        // Kelime silme modal
+        function showDeleteWordModal(wordId) {
+            event.stopPropagation();
+            if (confirm("Bu kelimeyi silmek istediğinize emin misiniz?")) {
+                fetch(`/delete_word/${wordId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Başarılı', 'Kelime başarıyla silindi', 'success');
+                        // Sayfayı yenile veya DOM'dan kelimeyi kaldır
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        showNotification('Hata', data.error || 'Kelime silinirken bir hata oluştu', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+                });
+            }
+        }
+
+        // Katılma isteklerini yükle
+        function loadJoinRequests() {
+            fetch(`/get_join_requests/{{ room.id }}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayJoinRequests(data.join_requests);
+                } else {
+                    console.error('Katılma istekleri yüklenemedi:', data.error);
+                    showNotification('Hata', data.error || 'Katılma istekleri yüklenemedi', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading join requests:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            });
+        }
+
+        // Katılma isteklerini göster
+        function displayJoinRequests(requests) {
+            const container = document.getElementById('join-requests-container');
+            const noRequestsDiv = document.getElementById('no-join-requests');
+            
+            if (requests.length === 0) {
+                container.innerHTML = '';
+                noRequestsDiv.style.display = 'block';
+            } else {
+                noRequestsDiv.style.display = 'none';
+                container.innerHTML = '';
+                
+                requests.forEach(request => {
+                    const requestDiv = document.createElement('div');
+                    requestDiv.className = 'member-item';
+                    requestDiv.innerHTML = `
+                        <div class="user-avatar">${request.username.charAt(0).toUpperCase()}</div>
+                        <div class="member-info">
+                            <div class="member-name">${request.username}</div>
+                            <div class="member-role">Katılma isteği gönderdi - ${request.created_at}</div>
+                        </div>
+                        <div class="member-actions" style="gap: 4px;">
+                            <button class="member-action-btn" onclick="approveJoinRequest(${request.id})" title="Kabul Et">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </button>
+                            <button class="member-action-btn" onclick="rejectJoinRequest(${request.id})" title="Reddet">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"/>
+                                    <line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(requestDiv);
+                });
+            }
+        }
+
+        // Katılma isteğini onayla
+        function approveJoinRequest(requestId) {
+            fetch(`/approve_join_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Başarılı', 'Katılma isteği onaylandı!', 'success');
+                    loadJoinRequests(); // İstekleri yenile
+                } else {
+                    showNotification('Hata', data.error || 'İstek onaylanırken hata oluştu', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            });
+        }
+
+        // Katılma isteğini reddet
+        function rejectJoinRequest(requestId) {
+            fetch(`/reject_join_request/${requestId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Başarılı', 'Katılma isteği reddedildi!', 'success');
+                    loadJoinRequests(); // İstekleri yenile
+                } else {
+                    showNotification('Hata', data.error || 'İstek reddedilirken hata oluştu', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Bağlantı Hatası', 'Sunucu ile iletişim kurulamadı', 'error');
+            });
+        }
+
+        // Katılma isteklerini yenile
+        function refreshJoinRequests() {
+            loadJoinRequests();
+        }
+
+        // Tab değiştiğinde katılma isteklerini yükle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab click event listener
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    if (tabName === 'requests') {
+                        loadJoinRequests();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
