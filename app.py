@@ -14,7 +14,6 @@ import asyncio
 import edge_tts
 import io
 from oauthlib.oauth2 import WebApplicationClient
-from gtts import gTTS
 from dotenv import load_dotenv
 
 
