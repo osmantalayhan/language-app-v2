@@ -23,7 +23,14 @@ load_dotenv()
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+# Normalize DATABASE_URL to use psycopg (psycopg3) driver on SQLAlchemy
+# So that SQLAlchemy doesn't try to import psycopg2
+_raw_db_uri = os.getenv('DATABASE_URL')
+if _raw_db_uri and _raw_db_uri.startswith('postgresql://'):
+    _normalized_db_uri = _raw_db_uri.replace('postgresql://', 'postgresql+psycopg://', 1)
+else:
+    _normalized_db_uri = _raw_db_uri
+app.config['SQLALCHEMY_DATABASE_URI'] = _normalized_db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
 
