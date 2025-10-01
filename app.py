@@ -30,7 +30,7 @@ if _raw_db_uri and _raw_db_uri.startswith('postgresql://'):
     _normalized_db_uri = _raw_db_uri.replace('postgresql://', 'postgresql+psycopg://', 1)
 else:
     _normalized_db_uri = _raw_db_uri
-app.config['SQLALCHEMY_DATABASE_URI'] = _normalized_db_uri
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
 
