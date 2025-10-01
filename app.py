@@ -23,7 +23,7 @@ load_dotenv()
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///words.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key')
 
@@ -536,17 +536,22 @@ with app.app_context():
     except Exception:
         # Tablolar yoksa oluştur
         print("Creating database tables...")
-    db.create_all()
+        db.create_all()
     
-    # Örnek kullanıcı oluştur
+    # Test kullanıcısı oluştur (sadece development için)
     try:
-        existing_user = User.query.filter_by(username='test').first()
+        existing_user = User.query.filter_by(username='admin').first()
         if not existing_user:
-            test_user = User(username='test', email='test@example.com')
-        test_user.set_password('test123')
-        db.session.add(test_user)
-        db.session.commit()
-        print("Test user created")
+            from werkzeug.security import generate_password_hash
+            test_user = User(
+                username='admin',
+                email='admin@test.com',
+                password_hash=generate_password_hash('admin123'),
+                language_level='B2'
+            )
+            db.session.add(test_user)
+            db.session.commit()
+            print("Test user created: admin@test.com / admin123")
     except Exception as e:
         print(f"Test user creation error: {e}")
         db.session.rollback()
